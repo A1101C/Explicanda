@@ -1,0 +1,91 @@
+Math Core: ___________________________________________________________
+Overview
+Take a user input and intelligently preform math based on it.
+Problem
+A computer doesn't inherently know what to do with 1+3*x and does not know the order of operations
+
+Solution:
+Step 1, Obtain a user input
+Step 2, turn that user input into a standard form
+Step 3, lex/tokenize the input so we know what functions to call
+Step 4, Parse the tokens with an AST so we can evaluate it correctly
+Step 5, Evaluate the abstract syntax tree to evaluate the user input
+Step 6, Return the input to the user
+
+Breakdown:
+Step 1: input main.cpp
+    print "please enter an expression or function of x."
+    inputMessy = input
+    validate that inputMessy is a valid expression or function
+
+Step 2: input cleaner cleaner.cpp
+    take inputs like log, exp, times, ^, * and turn them into a standard format
+        This may be helped by telling the user what inputs and functions are valid. 
+            With a front end you can control how input is received by controlling what options the user has or giving 
+                more examples of valid input
+
+Step 3: Lexer
+    starting from left to right one by one turn each part of the function into a token with a position
+        54 becomes int 54, + becomes addition, 28 becomes int 28, ^ becomes exponent, 2 becomes int 2
+            if there is an x that becomes a variable that can be replaced in the AST to solve large domains of x for graphing functions
+            ensure compatibility with dy/dx integration, CAS, and trig functions
+
+Step 4: AST
+    organize the tokens based on their position in the order of operations
+        some parts create new starting points or child trees. example 2-3*(4+7) needs to be broken into parts:
+         2 first position, / second, 3 third, ( fourth, 4 fifth, + sixth, 7 seventh, ) eighth, 
+            now if we don't tell it to do the parenthesis first it will try to take the tokens either side of * and multiply them together
+                that obviously wont work because 3 * ( is nonsense. 
+                it needs to first parse ( 4 + 7 ) as ( 11 ) then drop the parenthesis so it can do 3 * 11 
+
+Step 5: Evaluator
+    now evaluate the ast, if we have a value of x run many calculations very rapidly to create points we can plot as a line
+        ideally with a front end webGUI the domain would dynamically update based on the position of the users window in the cartesian plane
+        and the level of accuracy would increase as they zoom in, calculating more accurate points
+
+Step 6:
+    return the output to the user in some way, as a text output, table of xy points, graph, ect ect
+
+
+
+Graphing Core: ___________________________________________________________
+Overview:
+Take a list or group of points and turn it into a line on a cartesian plane
+
+Problem
+Lines are made of infinitely many points, I cannot calculate infinitely many points 
+so I need to be able to turn points that are near one another into smooth lines and track discontinuities
+
+Solution:
+Step 1: Evaluate if the function is valid, then if it is constant, linear, polynomial(quadratic, exponential), real,     
+Step 2: iterate through the math core to calculate y for x,
+Step 3: save those x, y values to a database of some sort
+Step 4: pull those points from the database to generate a graph
+Step 5: Display that graph
+
+
+
+
+
+
+Directory Outline:
+arithmos-machine/       project folder                    
+
+arithmos-core/          THE MATH ENGINE FOLDER
+CMakeLists.txt          The master compilation instructions
+
+include/                blueprint .h files
+engine.h                Step 6: The clean API wrapper
+lexer.h                 Step 3: Token definitions & setup
+parser.h                Step 4: AST node structures
+evaluate.h              Step 5: Evaluator to flip through the AST nodes
+
+src/                    actual C++ logic
+main.cpp                Step 1: CLI input testing sandbox   
+engine.cpp              Integrates step 3, 4, 5 together by calling them when step one passes something to them
+lexer.cpp               Step 3: Character loops & tokenizing
+parser.cpp              Step 4: Shunting-Yard
+evaluate.cpp            Step 5: Evaluator
+
+arithmos-portal/         Future web GUI or API
+data/                    Future database files
