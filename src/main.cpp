@@ -2,8 +2,10 @@
 
 #include <iostream> //required for any basic input/output operations
 #include <string> //imports the string library
+#include <vector> //imports the vector
 #include "config.h" //includes the config file containing debug variables
 #include "cleaner.h" //includes the cleaner.h which defines the cleaner function in cleaner.cpp
+#include "lexer.h" //includes the lexer.h file defining the lexer
 
 int main() {    //this is the main fuction, int means that it will return an int value to whatever ran it, 0 means success and 1 means failure
 
@@ -17,8 +19,15 @@ int main() {    //this is the main fuction, int means that it will return an int
     std::string cleanFunction; //declares a string variable to hold a cleaned up input
     cleanFunction = cleaner(messyFunction);
 
+    std::vector < std::string > tokenizedFunction = lexer(cleanFunction);
+
     if (config::debugMode) { //prints the messy function and clean function if debug mode is true
-        std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << std::endl;
+        std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << " \n"
+                  << "Tokenized to:  "; //prints each token inside brackets
+                for (const std::string& token : tokenizedFunction) {
+                    std::cout << "[" << token << "], ";
+                }
+                std::cout << std::endl;
     }
 
     //Determine the type of calculation to be preformed

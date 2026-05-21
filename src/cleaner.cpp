@@ -13,13 +13,16 @@ while((start_pos = str.find(from, start_pos)) != std::string::npos) {
     }
 }
 
+//beginning of the cleaner function
 std::string cleaner(std::string inputFunction){
 
     std::string outputFunction; //initializes a string to hold the cleaned outputFunction
 
     if (config::debugMode) { //prints the inputFunction for the cleaner to the console if debug is true
-        std::cout << "Cleaner inputFunction is:   " << inputFunction << std::endl;
+        std::cout << "Cleaner started with inputFunction:   " << inputFunction << std::endl;
     }
+
+    replaceAll(inputFunction, " ", "");
 
     for (int n = 0; n < inputFunction.length() - 1; ++ n) { //creates int variable n and sets it equal to 0, and as long as n is less than the length of the inputFunction string -1 run the stuff run the loop and add 1 to n at the end
         if (isdigit(inputFunction[n]) && (inputFunction[n+1]) == 'x') //if the character in position n is a digit and the character in position n+1 is x run next, if not it does ++n
@@ -29,6 +32,10 @@ std::string cleaner(std::string inputFunction){
     }
 
     outputFunction = inputFunction;
+
+    if (config::debugMode) { //prints the outputFunction for the cleaner to the console if debug is true
+        std::cout << "Cleaner ended with outputFunction:   " << outputFunction << std::endl;
+    }
 
     return outputFunction; // returns the cleaned function out of the cleaner
 }
