@@ -75,6 +75,8 @@ std::vector < std::string > lexer(std::string inputFunction) {
                 }
             }
 
+            if (foundTrig) { } //do nothing, this just skips the following else if and else statements if true and runs them if false
+
             for (int i = 0; i < logFunctions.size(); i++) { //creates a loop to look through the log function vector
                 if (nextThree == logFunctions[i]) { //determines if the next 3 characters contain a log function
                     if (nextThree == std::string("log")){ //determines if the next three characters are exactly log
@@ -86,26 +88,26 @@ std::vector < std::string > lexer(std::string inputFunction) {
                             lexedTokens.push_back("("); //add ( to the token vector before the x
                             lexedTokens.push_back("x"); //add x to the token vector
                             lexedTokens.push_back(")"); //add ) to the token vector after the x
-                        n += 1; //advance to the next position
+                            n += 1; //advance to the next position
                         }
                     }
+                }
 
-                    else if (nextThree.substr(0, 2) == "ln") {// if its not exactly log it must be ln
-                        nextThree.clear(); //clear the next three
-                        lexedTokens.push_back("ln"); //add ln to the token vector
-                        foundLog = true; //found log is true
-                        n += 2; //advance two positions to get past the ln
-                        if (inputFunction[n] == 'x') { //if the next char is x
-                            lexedTokens.push_back("("); //add ( to the token vector before the x
-                            lexedTokens.push_back("x"); //add x to the token vector
-                            lexedTokens.push_back(")"); //add ) to the token vector after the x
-                            n += 1; //advance to the next position
-                        }   
-                    }
+                else if (nextThree.substr(0, 2) == "ln") {// if its not exactly log it must be ln
+                    nextThree.clear(); //clear the next three
+                    lexedTokens.push_back("ln"); //add ln to the token vector
+                    foundLog = true; //found log is true
+                    n += 2; //advance two positions to get past the ln
+                    if (inputFunction[n] == 'x') { //if the next char is x
+                        lexedTokens.push_back("("); //add ( to the token vector before the x
+                        lexedTokens.push_back("x"); //add x to the token vector
+                        lexedTokens.push_back(")"); //add ) to the token vector after the x
+                        n += 1; //advance to the next position
+                    }   
                 }
             }  
             
-            if (foundTrig || foundLog) { } //do nothing, this just skips the following else if and else statements if true and runs them if false
+            if (foundLog) { } //do nothing, this just skips the following else if and else statements if true and runs them if false
 
             else if (currentChar == 'x' || currentChar == 'e' ) { //if the next token is an x or e
                 lexedTokens.push_back("*"); //add * to the token vector before the x or e
@@ -113,7 +115,13 @@ std::vector < std::string > lexer(std::string inputFunction) {
                 currentToken.push_back(currentChar); //add it to the currentChar string
                 lexedTokens.push_back(currentToken); //add the currentToken to the token vectors
                 lexedTokens.push_back(")"); //add ) to the token vector after the x or e
-                lexedTokens.push_back("*"); //add * to the token vector before the x or e
+
+                if ( n+ 1 < inputFunction.length()) { //if the next position exists
+                    std::string nextChar(1, inputFunction[n + 1]); //make it equal to the string nextChar, the (1,inputFunction) is to say that the char we are pulling from input function is the 1st character in the string nextChar
+                    if (!containsSubstring(nextChar, operators)) {
+                        lexedTokens.push_back("*");
+                    }
+                }
                 currentToken.clear(); //clear the current token
                 n++; //advance to the next position in the inputFunction
             }
