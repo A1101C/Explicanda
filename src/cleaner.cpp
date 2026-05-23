@@ -2,7 +2,7 @@
 
 #include <iostream> //required for any basic input/output operations
 #include <string> //imports the string library
-#include <cctype> //needed for isapha
+#include <cctype> //needed for isalpha
 #include "config.h" //includes the config file containing debug variables
 #include "cleaner.h" //includes the cleaner.h file so it knows what to do
 

@@ -1,7 +1,7 @@
 //This is the main entry point of the function
 
 #include <iostream> //required for any basic input/output operations
-#include <cctype> //needed for isapha
+#include <cctype> //needed for isalpha
 #include <string> //imports the string library
 #include <vector> //imports the vector
 #include "config.h" //includes the config file containing debug variables
