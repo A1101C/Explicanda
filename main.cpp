@@ -7,6 +7,7 @@
 #include "config.h" //includes the config file containing debug variables
 #include "cleaner.h" //includes the cleaner.h which defines the cleaner function in cleaner.cpp
 #include "lexer.h" //includes the lexer.h file defining the lexer
+#include "parserast.h" //includes the parser and ast file
 
 int main() {    //this is the main fuction, int means that it will return an int value to whatever ran it, 0 means success and 1 means failure
 
@@ -18,17 +19,25 @@ int main() {    //this is the main fuction, int means that it will return an int
     std::cout << "You entered: "; std::cout << messyFunction << std::endl; //outputs the user's input back to them
 
     std::string cleanFunction; //declares a string variable to hold a cleaned up input
+
     cleanFunction = cleaner(messyFunction);
 
     std::vector < std::string > tokenizedFunction = lexer(cleanFunction);
 
+    std::vector < std::string > parsedFunction = parserast(tokenizedFunction);
+
     if (config::debugMode) { //prints the messy function and clean function if debug mode is true
-        std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << " \n"
-                  << "Tokenized to:  "; //prints each token inside brackets
-                for (const std::string& token : tokenizedFunction) {
-                    std::cout << "[" << token << "], ";
-                }
-                std::cout << std::endl;
+        std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << " \n";
+        std::cout << "Tokenized to:  "; //prints each token inside brackets for our tokenized vector
+        for (const std::string& token : tokenizedFunction) {
+            std::cout << "[" << token << "], ";
+        }
+        std::cout << std::endl;
+        std::cout << "Parsed to:  "; //prints each token inside brackets for the parsed vector
+        for (const std::string& token : parsedFunction) {
+            std::cout << "[" << token << "], ";
+        }
+        std::cout << std::endl;
     }
 
     //Determine the type of calculation to be preformed

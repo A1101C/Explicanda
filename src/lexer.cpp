@@ -5,15 +5,8 @@
 #include <string> //imports the string library
 #include <vector> //imports the vector
 #include "config.h" //includes the config file containing debug variables
+#include "utils.h" //this has the containsSubstring function
 
-bool containsSubstring(const std::string& mainString, const std::vector <std::string>& subString) { //this function returns true if a main string contains within it our substring
-    for (const std::string& sub : subString) {  //for every element in the substring vector
-        if (mainString.find(sub) != std::string::npos) {  //try to find the substring in the mainstring
-            return true;
-        }
-    }
-    return false;
-}
 
 //Begining of the lexer function
 std::vector < std::string > lexer(std::string inputFunction) {
