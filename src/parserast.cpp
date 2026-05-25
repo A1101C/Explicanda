@@ -6,93 +6,102 @@
 #include <vector> //imports the vector
 #include <cctype> //used for isalnum
 #include "config.h" //includes the config file containing debug variables
-#include "utils.h" //this has the containsSubstring function
+#include "utils.h" //this has the containsString and replaceAll function
 
 //start of a basic attempt to organize the tokens based on PEMDAS
-
-/*while the number of operators 
-    for the numper of positions
-        if i = operator with highest to lowest priority
-            if i was ( then we need to go through everything after I until we hit ) and add 1 to the main for loop for every operator contained in the ()
-                organize the operators in the parenthesis and their values, 
-                when we hit ) exit this loop and return to the for the number of operators loop
-            if pos i is ) i is greater than 0 and i-1 is alphanumeric
-                put pos i-1 in the calcvector  
-            put pos i in the calcvector
-            advance to the next priority operator
-
-*/
-
 std::vector < std::string > pemdas(std::vector<std::string> inputVector, int operatorCount) {
-    std::vector < std::string > calcVector; //creates the vector where the correctly ordered functions and their calculations will be kept.
-    std::string currentOperator; //a string to keep track of where we are in the function
-    std::string currentPriority; //A string to determine the current highest priority operator
-    int openParenthesis = 0
+    std::vector < std::string > orderedVector; //creates the vector where the correctly ordered functions and their calculations will be kept.
     std::vector < std::string > operators = {"(", ")", "^", "*", "/", "+", "-", "="}; //makes a vector to hold operators
-    while (0 < operatorCount) { //while 0 is less than the operatorCount
-        for (int i = 0; i < operators.size(); i++) { //look at every position in the operators vector
-            currentPriority = operators[i]; //the current priority changes as we go down through the list to be sure we look at every possible operator in the right order
-            for (int n = 0; n < inputVector.size(); n++ ) { //look at every position in the input vector
-                currentOperator = inputVector[n]; //the current operator is in the nth position of the input function
-                if (currentOperator == currentPriority && currentOperator == "(" ){ //and if the the current operator matches our priority and is an open parenthesis
-                    if (0 < openParenthesis) { //if we have already had open parenthesis this must be an inset set of parenthesis
-                        calcVector.insert(calcVector.begin(), inputVector[n]); //inset the inset parenthesis into the beginning of the function
-                    }
-                    openParenthesis += 1; //add one to the number of open parenthesis
-                    if ( 0 < n){ //
-                        calcVector.push_back(inputVector[n - 1]); 
-                    }
-                    calcVector.push_back(inputVector[n]);
-                }
-                else if ()
+    int opCounter = 1; //this string is to keep track of replacements as we go through the multipass token reducer
+    std::vector < std::string > subExpression; //a temporary vector to hold the subexpressions inside of parenthesis
+    std::vector < std::string > subResults; //a temporary vector to hold the subexpressions reduced form
+
+    while (containsString("(", inputVector)) { //while the input vector has an open parenthesis
+        int openParenthesis = -1; //initializes a variable to hold the position of our inner most open parenthesis
+        int closedParenthesis = -1; //initializes a variable to hold the position of the inner most closed parenthesis
+        for (int n = inputVector.size() - 1; 0 <= n; n-- ){ //starting from the end of the vector go to the left to find the inner most set of open parenthesis
+            if (inputVector[n] == "("){ //when you find an open parenthesis in position n
+                openParenthesis = n; //set the variable open parenthesis equal to it
+                break; //then immediately leave the if statement
             }
+        }
+        for (int n = openParenthesis; n < inputVector.size(); n++){ //now starting from the open parenthesis and moving to the right find the first closed parenthesis
+            if (inputVector[n] == ")"){ //if the n position in the input vector is )
+                closedParenthesis = n;
+                break; //leave the if statement                  
+            }
+        }
+        subExpression.clear(); //makes sure the sub expression is empty
+        subExpression.assign(
+            inputVector.begin() + openParenthesis + 1, // the vector.function(); functions uses the range as [start, stop) so it includes the first option but excludes the last one
+            inputVector.begin() + closedParenthesis
+        ); // the above 3 lines assign all the strings from the input vector between the positions of openParenthesis + 1, to closedParenthesis to the subExpression. this ensures we dont bring the parenthesis with us
+
+        int subOpCount = operatorCounter(subExpression); //gets the operator count for the sub expression
+        subResults = pemdas(subExpression, subOpCount); //passes that new sub expression with its operator count back into the multi pass parser, and because it should not have any parenthesis inside it it will skip the parenthesis check
+    
+        //now we need to delete the strings from the input vector that we have pulled out
+        std::string tempToken = "T" + std::to_string(opCounter); //makes a temporary token based on the number of operators we have parsed through
+        opCounter ++; //increments the opCounter
+
+        inputVector.erase( //erase the sub expression from the 
+            inputVector.begin() + openParenthesis, // the vector.function(); functions uses the range as [start, stop) so it includes the first option but excludes the last one
+            inputVector.begin() + closedParenthesis + 1 // + 1 ensures we erase the closed parenthesis too
+        );
+
+        inputVector.insert(inputVector.begin() + openParenthesis, tempToken); // inserts a place holder where the open parenthesis used to be, this also shifts any strings at or to the right of inputVector[openParenthesis] to the right by one
+    
+        orderedVector.insert(orderedVector.end(), subResults.begin(), subResults.end()); //insert, at the end of ordered vector, everything from subresults beginning to the subresults end
+    }
+
+    std::vector < std::vector < std::string > > operatorPriority = { //this is a vector of vectors, the inner vectors contain equal priority operators
+        {"^"},          //Tier 0 
+        {"*", "/"},     //Tier 1
+        {"+", "-"},     //Tier 2
+        {"="},          //Tier 3
+    };
+
+    //now insert items into the orderedVector from the inputVector by the order of operations 
+    std::vector < std::string > currentPriority; //initializes a vector to hold the currentPriority tier
+    int tieBreaker = 0; //this is to determine the winning index if we have both * and /
+    for ( int n = 0; n < operatorPriority.size(); n++ ) { //this will process through 0-3 for the 3 tiers in the operator priority vector of vectors
+        currentPriority = operatorPriority[n]; // sets the current priority vector equal to our the vector tier n from operator Priority
+        while(containsAny(currentPriority, inputVector)){ //while the input vector contains any strings from the current priority list
+            for (int n = 0; n < inputVector.size(); n++ ) { //look left to right for the current priority token
+                if (containsString(inputVector[n], currentPriority)) { //if the current string from the input vector is in the current priority tier
+                    tieBreaker = n; //the tie breaker is equal to the nth position
+                    break; //immediately stop because we found the left most operator
+                }
+            }
+        
+
+            //this is the reduction part to remove from input function and put in orderedVector in the right order
+            std::string op = inputVector[tieBreaker]; //sets our tokens from the inputvector to other temporary tokens based on their position in relation to the operator
+            std::string leftValue = inputVector[tieBreaker - 1];
+            std::string rightValue = inputVector[tieBreaker + 1];
+
+            std::string tempToken = "T" + std::to_string(opCounter); //makes a temporary token based on the number of operators we have parsed through
+            opCounter++;
+
+            orderedVector.push_back(leftValue); //add the value to the left to the end of the ordered vector
+            orderedVector.push_back(op); //add the operator to the end of the ordered vector
+            orderedVector.push_back(rightValue); //add the value to the right to the end of the ordered vector
+            orderedVector.push_back("->"); //add an arrow indicating what placeholder value the removed part of the expression is equal to
+            orderedVector.push_back(tempToken); //add the placeholder value that the expression is equal to
+          
+            inputVector.erase(inputVector.begin() + tieBreaker - 1, inputVector.begin() + tieBreaker + 2); //erase the three components left, op, and right
+            inputVector.insert(inputVector.begin() + tieBreaker - 1, tempToken); //put the temporary token exactly where the left value used to be in the input function
+
+            /*the above will take an input vector like:
+            [3], [*], [x], [+], [4], [/], [3], [-], [1],
+            and turn it into an ordered vector like:
+            [3], [*], [x], [->], [T1], [4], [/], [3], [->], [T2], [T1], [+], [T2], [->], [T3], [T3], [-], [1], [->], [T4]
+            now I need to go from left to right saving the value of 3*x as t1, 4/3 as t2, then t1+t2 as t3, then t3- 1 as t4, and return t4
+            */
         }
     }
-    
-    /*for (int i = 0; i < inputVector.size(); ++i) {//look at every position in the input vector
-        if (inputVector[i] == "(") { //if i is (
-            calcVector.push_back(inputVector[i]); //add it to the top of its branch
-            if (config::debugMode) { //if debug is true
-                std::cout << "pemdas started ( loop." << std::endl;
-            }
-            while (inputVector[i]!= ")") {
-                if (inputVector[i] == "^") { //if i is a ^
-                    calcVector.push_back(inputVector[i - 1]); //grabs the number before the operator to the back of the ast
-                    calcVector.push_back(inputVector[i]); //add it to the back of the seat
-                    i++; //advance to the next position of i
-                }
-                else if (inputVector[i] == "*" || inputVector[i] == "/") { //if i is a * or /
-                    calcVector.push_back(inputVector[i - 1]); //grabs the number before the operator to the back of the ast
-                    calcVector.push_back(inputVector[i]); //add it to the back of the ast
-                    i++; //advance to the next position of i
-                }
-                else if (inputVector[i] == "+" || inputVector[i] == "-") { //if i is a + or -
-                    calcVector.push_back(inputVector[i - 1]); //grabs the number before the operator to the back of the ast
-                    calcVector.push_back(inputVector[i]); //add it to the back of the ast
-                    i++; //advance to the next position of i
-                }
-                else;
-                    calcVector.push_back(inputVector[i]); //add it to the back of the ast
-                    i++; //advance to the next position of i
-            }
-            if (config::debugMode) { //if debug is true
-                std::cout << "pemdas finished ) loop." << std::endl;
-            }
-        }
-        if (inputVector[i] == "^") { //if i is a ^
-            calcVector.push_back(inputVector[i - 1]); //grabs the number before the operator to the back of the ast
-            calcVector.push_back(inputVector[i]); //add it to the back of the seat
-        }
-        else if (inputVector[i] == "*" || inputVector[i] == "/") { //if i is a * or /
-            calcVector.push_back(inputVector[i - 1]); //grabs the number before the operator to the back of the ast
-            calcVector.push_back(inputVector[i]); //add it to the back of the ast
-        }
-        else if (inputVector[i] == "+" || inputVector[i] == "-") { //if i is a + or -
-            calcVector.push_back(inputVector[i - 1]); //grabs the number before the operator to the back of the ast
-            calcVector.push_back(inputVector[i]); //add it to the back of the ast
-        }
-    }*/
-    return calcVector;
+
+    return orderedVector; 
 }
 
 
@@ -115,15 +124,7 @@ std::vector < std::string > parserast(std::vector < std::string > inputVector) {
     then find the next operator and put it in branch(2) and the values to the left and right in leaf(2), then keep going.
     */
 
-    std::vector < std::string > operators = {"(", ")", "^", "*", "/", "+", "-", "="}; //makes a vector to hold operators
-    int operatorCount = 0; //initializes a variable to keep track of the count of operators
-
-    for (int n = 0; n < inputVector.size(); ++n) { //this loop will check every position in the inputVector
-         std::string currentToken(inputVector[n]); //make it equal to the first character of the next string in vector position n
-            if (containsSubstring(currentToken, operators)) { //check if the current token is an operator
-                operatorCount += 1; //increase the operator count by 1
-        }
-    }
+    int operatorCount = operatorCounter(inputVector); //this calls the operator count function from the utils
 
     calcVector = pemdas(inputVector, operatorCount);
 
