@@ -5,7 +5,7 @@
 #include <string> //imports the string library
 #include <vector> //imports the vector
 #include "config.h" //includes the config file containing debug variables
-#include "utils.h" //this has the containsSubstring function
+#include "utils.h" //this has the containsString function
 
 
 //Begining of the lexer function
@@ -58,12 +58,12 @@ std::vector < std::string > lexer(std::string inputFunction) {
                     nextThree.clear(); //now clear the token so that we can collect another one
                     foundTrig = true; //this will make the foundTrig if statement return true and skip remaining checks for inputFunction[n] and prevent the last else from adding 1 after this adds 3
                     n += 3; //advance to the next position in the inputFunction after the found trig function
-                    if (inputFunction[n] == 'x') { //if the next char is x
+                    /*if (inputFunction[n] == 'x') { //if the next char is x
                         lexedTokens.push_back("("); //add ( to the token vector before the x
                         lexedTokens.push_back("x"); //add x to the token vector
                         lexedTokens.push_back(")"); //add ) to the token vector after the x
-                        n += 1; //advance to the next position
-                    }
+                        n += 1; //advance to the next position 
+                    } */ //commented out due to an issue with the parser and sinx
                     break; //breaks the loop the moment a match is found
                 }
             }
@@ -77,12 +77,12 @@ std::vector < std::string > lexer(std::string inputFunction) {
                         nextThree.clear(); //now clear the token so that we can collect another one
                         foundLog = true; //this will make the foundLog if statement return true and skip remaining checks for inputFunction[n] and prevent the last else from adding 1 after this adds 3
                         n += 3; //advance to the next position in the inputFunction after the found log function
-                        if (inputFunction[n] == 'x') { //if the next char is x
+                        /*if (inputFunction[n] == 'x') { //if the next char is x
                             lexedTokens.push_back("("); //add ( to the token vector before the x
                             lexedTokens.push_back("x"); //add x to the token vector
                             lexedTokens.push_back(")"); //add ) to the token vector after the x
                             n += 1; //advance to the next position
-                        }
+                        }*/ // commented out due to and issue with logx in the parser
                     }
                 }
 
@@ -91,12 +91,12 @@ std::vector < std::string > lexer(std::string inputFunction) {
                     lexedTokens.push_back("ln"); //add ln to the token vector
                     foundLog = true; //found log is true
                     n += 2; //advance two positions to get past the ln
-                    if (inputFunction[n] == 'x') { //if the next char is x
+                    /*if (inputFunction[n] == 'x') { //if the next char is x
                         lexedTokens.push_back("("); //add ( to the token vector before the x
                         lexedTokens.push_back("x"); //add x to the token vector
                         lexedTokens.push_back(")"); //add ) to the token vector after the x
                         n += 1; //advance to the next position
-                    }   
+                    }*/ //commented out due to an issue with the parser and (x)  
                 }
             }  
             
@@ -104,15 +104,15 @@ std::vector < std::string > lexer(std::string inputFunction) {
 
             else if (currentChar == 'x' || currentChar == 'e' ) { //if the next token is an x or e
                 lexedTokens.push_back("*"); //add * to the token vector before the x or e
-                lexedTokens.push_back("("); //add ( to the token vector before the x or e
+                //lexedTokens.push_back("("); //add ( to the token vector before the x or e
                 currentToken.push_back(currentChar); //add it to the currentChar string
                 lexedTokens.push_back(currentToken); //add the currentToken to the token vectors
-                lexedTokens.push_back(")"); //add ) to the token vector after the x or e
+                //lexedTokens.push_back(")"); //add ) to the token vector after the x or e
 
-                if ( n+ 1 < inputFunction.length()) { //if the next position exists
+                if (n + 1 < inputFunction.length()) { //if the next position exists
                     std::string nextChar(1, inputFunction[n + 1]); //make it equal to the string nextChar, the (1,inputFunction) is to say that the char we are pulling from input function is the 1st character in the string nextChar
-                    if (!containsSubstring(nextChar, operators)) {
-                        lexedTokens.push_back("*");
+                    if (!containsString(nextChar, operators)) { //if the next character is not an operator
+                        lexedTokens.push_back("*"); //put * between x and it.
                     }
                 }
                 currentToken.clear(); //clear the current token
@@ -125,7 +125,7 @@ std::vector < std::string > lexer(std::string inputFunction) {
             }
         }
 
-        else if (containsSubstring(std::string(1, currentChar), operators)) { //converts the currentChar into a string so I can compare it against operators, and checks if the next token is an operator
+        else if (containsString(std::string(1, currentChar), operators)) { //converts the currentChar into a string so I can compare it against operators, and checks if the next token is an operator
             currentToken.push_back(currentChar); //add it to the currentChar string
                 lexedTokens.push_back(currentToken); //add the currentToken to the token vector
                 currentToken.clear(); //clears the currentToken

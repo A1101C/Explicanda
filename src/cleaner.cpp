@@ -5,14 +5,7 @@
 #include <cctype> //needed for isalpha
 #include "config.h" //includes the config file containing debug variables
 #include "cleaner.h" //includes the cleaner.h file so it knows what to do
-
-void replaceAll(std::string& str, const std::string& from, const std::string& to) { // called with replaceAll(inputstring, "thing to be replaced", "thing to replace with")
-size_t start_pos = 0;
-while((start_pos = str.find(from, start_pos)) != std::string::npos) {
-    str.replace(start_pos, from.length(), to);
-    start_pos += to.length(); 
-    }
-}
+#include "utils.h" //this has the containsString and replaceAll function
 
 //beginning of the cleaner function
 std::string cleaner(std::string inputFunction){
