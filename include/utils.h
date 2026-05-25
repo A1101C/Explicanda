@@ -15,11 +15,20 @@ inline bool containsString(const std::string& mainString, const std::vector <std
     return false;
 }
 
+inline bool containsAny(const std::vector <std::string>& tokenVector, const std::vector<std::string>& inputVector) { //will check if the inputVector contains any of the tokens from the tokenVector
+    for (const std::string& token : tokenVector) { //for every index in the tokenVector, token is equal to the current tokenVector index
+        if (containsString(token, inputVector)) { //check if the token exists in the inputVector by using the contains string function
+            return true;
+        }
+    }
+    return false;
+}
+
 inline void replaceAll(std::string& str, const std::string& from, const std::string& to) { // called with replaceAll(inputstring, "thing to be replaced", "thing to replace with")
-size_t start_pos = 0;
-while((start_pos = str.find(from, start_pos)) != std::string::npos) {
-    str.replace(start_pos, from.length(), to);
-    start_pos += to.length(); 
+size_t start_pos = 0; //a special unsigned integer type is our start position variable
+while((start_pos = str.find(from, start_pos)) != std::string::npos) { //search str from the start position, and continue as long as the from string is in the str string
+    str.replace(start_pos, from.length(), to); //in the string, replace at the current start_pos, the from strings entire length, with the to string
+    start_pos += to.length(); //increment the start position by the length of the to string
     }
 }
 
