@@ -9,10 +9,9 @@
 #include "utils.h" //this has the containsString and replaceAll function
 
 //start of a basic attempt to organize the tokens based on PEMDAS
-std::vector < std::string > pemdas(std::vector<std::string> inputVector, int operatorCount) {
+std::vector < std::string > pemdas(std::vector<std::string> inputVector, int operatorCount, int& opCounter) {
     std::vector < std::string > orderedVector; //creates the vector where the correctly ordered functions and their calculations will be kept.
     std::vector < std::string > operators = {"(", ")", "^", "*", "/", "+", "-", "="}; //makes a vector to hold operators
-    int opCounter = 1; //this string is to keep track of replacements as we go through the multipass token reducer
     std::vector < std::string > subExpression; //a temporary vector to hold the subexpressions inside of parenthesis
     std::vector < std::string > subResults; //a temporary vector to hold the subexpressions reduced form
 
@@ -37,12 +36,20 @@ std::vector < std::string > pemdas(std::vector<std::string> inputVector, int ope
             inputVector.begin() + closedParenthesis
         ); // the above 3 lines assign all the strings from the input vector between the positions of openParenthesis + 1, to closedParenthesis to the subExpression. this ensures we dont bring the parenthesis with us
 
+        std::string tempToken; //declare the tempToken string
+
         int subOpCount = operatorCounter(subExpression); //gets the operator count for the sub expression
-        subResults = pemdas(subExpression, subOpCount); //passes that new sub expression with its operator count back into the multi pass parser, and because it should not have any parenthesis inside it it will skip the parenthesis check
-    
+        subResults = pemdas(subExpression, subOpCount, opCounter); //passes that new sub expression with its operator count back into the multi pass parser, and because it should not have any parenthesis inside it it will skip the parenthesis check
+        
+        if (!subResults.empty()) { //if the subresult is not empty
+            tempToken = subResults.back(); //the current tempToken equals the inner expression of subresults
+        }
+        else { //if subresults ran but is "empty" that means there are no operators in it but it might have a single number like if it were (4)
+            tempToken = subExpression[0]; //
+        }
         //now we need to delete the strings from the input vector that we have pulled out
-        std::string tempToken = "T" + std::to_string(opCounter); //makes a temporary token based on the number of operators we have parsed through
-        opCounter ++; //increments the opCounter
+        //std::string tempToken = "T" + std::to_string(opCounter); //makes a temporary token based on the number of operators we have parsed through
+        //opCounter ++; //increments the opCounter
 
         inputVector.erase( //erase the sub expression from the 
             inputVector.begin() + openParenthesis, // the vector.function(); functions uses the range as [start, stop) so it includes the first option but excludes the last one
@@ -125,8 +132,8 @@ std::vector < std::string > parserast(std::vector < std::string > inputVector) {
     */
 
     int operatorCount = operatorCounter(inputVector); //this calls the operator count function from the utils
-
-    calcVector = pemdas(inputVector, operatorCount);
+    int opCounter = 1; //this string is to keep track of replacements as we go through the multipass token reducer
+    calcVector = pemdas(inputVector, operatorCount, opCounter);
 
     if (config::debugMode) { //prints the inputFunction for the cleaner to the console if debug is true
         std::cout << "Parser AST Finished with token order:   ";

@@ -8,6 +8,7 @@
 #include "cleaner.h" //includes the cleaner.h which defines the cleaner function in cleaner.cpp
 #include "lexer.h" //includes the lexer.h file defining the lexer
 #include "parserast.h" //includes the parser and ast file
+#include "interpreter.h" //includes the interpreter.h file defining the interpreter
 
 int main() {    //this is the main fuction, int means that it will return an int value to whatever ran it, 0 means success and 1 means failure
 
@@ -19,12 +20,18 @@ int main() {    //this is the main fuction, int means that it will return an int
     std::cout << "You entered: "; std::cout << messyFunction << std::endl; //outputs the user's input back to them
 
     std::string cleanFunction; //declares a string variable to hold a cleaned up input
-
     cleanFunction = cleaner(messyFunction);
 
-    std::vector < std::string > tokenizedFunction = lexer(cleanFunction);
+    std::vector < std::string > tokenizedFunction;
+    tokenizedFunction = lexer(cleanFunction);
 
-    std::vector < std::string > parsedFunction = parserast(tokenizedFunction);
+    std::vector < std::string > parsedFunction;
+    parsedFunction = parserast(tokenizedFunction);
+
+    bool graphing = false;
+
+    double solution;
+    solution = interpreter(parsedFunction, graphing);
 
     if (config::debugMode) { //prints the messy function and clean function if debug mode is true
         std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << " \n";
@@ -38,6 +45,8 @@ int main() {    //this is the main fuction, int means that it will return an int
             std::cout << "[" << token << "], ";
         }
         std::cout << std::endl;
+
+        std::cout << "solution is: "<< solution << " \n";
     }
 
     //Determine the type of calculation to be preformed
