@@ -55,7 +55,7 @@ std::vector < std::string > lexer(std::string inputFunction) {
             for (const std::string& trig : trigFunctions) {   //check if the length of the string is long enough to be a trig function
                 if (n + trig.length() <= inputFunction.length() && inputFunction.substr(n, trig.length()) == trig) { //makes sure input Function is long enough to have a trig function, and loops through the trig function vector to determine if one exists in the inputFunction and assigns it to trig
                     lexedTokens.push_back(trig); //put the trig substring in the lexedTokens vector
-                    
+
                     n += trig.length(); //skips n to go past the length of the trig function
                     foundTrig = true; //found trig is true
                     break; //immediately leave the if and for loops
@@ -66,37 +66,20 @@ std::vector < std::string > lexer(std::string inputFunction) {
                 continue; //skip back to the top
             } 
 
-            for (int i = 0; i < logFunctions.size(); i++) { //creates a loop to look through the log function vector
-                if (nextThree == logFunctions[i]) { //determines if the next 3 characters contain a log function
-                    if (nextThree == std::string("log")){ //determines if the next three characters are exactly log
-                        lexedTokens.push_back(nextThree); //add the entire next three string we just made to the vector
-                        nextThree.clear(); //now clear the token so that we can collect another one
-                        foundLog = true; //this will make the foundLog if statement return true and skip remaining checks for inputFunction[n] and prevent the last else from adding 1 after this adds 3
-                        n += 3; //advance to the next position in the inputFunction after the found log function
-                        /*if (inputFunction[n] == 'x') { //if the next char is x
-                            lexedTokens.push_back("("); //add ( to the token vector before the x
-                            lexedTokens.push_back("x"); //add x to the token vector
-                            lexedTokens.push_back(")"); //add ) to the token vector after the x
-                            n += 1; //advance to the next position
-                        }*/ // commented out due to and issue with logx in the parser
-                    }
-                }
+            bool foundLog = false; // creates a bool to track logs
+            for (const std::string& log : logFunctions) {
+                if (n + log.length() <= inputFunction.length() && inputFunction.substr(n, log.length()) == log) {//makes sure input Function is long enough to have a log, and loops through the log function vector to determine if one exists in the inputFunction and assigns it to log
+                    lexedTokens.push_back(log); // add the matched log token
 
-                else if (nextThree.substr(0, 2) == "ln") {// if its not exactly log it must be ln
-                    nextThree.clear(); //clear the next three
-                    lexedTokens.push_back("ln"); //add ln to the token vector
-                    foundLog = true; //found log is true
-                    n += 2; //advance two positions to get past the ln
-                    /*if (inputFunction[n] == 'x') { //if the next char is x
-                        lexedTokens.push_back("("); //add ( to the token vector before the x
-                        lexedTokens.push_back("x"); //add x to the token vector
-                        lexedTokens.push_back(")"); //add ) to the token vector after the x
-                        n += 1; //advance to the next position
-                    }*/ //commented out due to an issue with the parser and (x)  
+                    n += log.length();  //dynamically advance past its length, 3 for log, 2 for ln
+                    foundLog = true;  //mark that we mfound a log
+                    break;
                 }
+            }
+
+            if (foundLog) {
+                continue; // jump back to the top
             }  
-            
-            if (foundLog) { } //do nothing, this just skips the following else if and else statements if true and runs them if false
 
             else if (currentChar == 'x' || currentChar == 'e' ) { //if the next token is an x or e
                 lexedTokens.push_back("*"); //add * to the token vector before the x or e

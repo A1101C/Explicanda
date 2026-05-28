@@ -13,6 +13,7 @@ std::vector < std::string > pemdas(std::vector<std::string> inputVector, int ope
     std::vector < std::string > orderedVector; //creates the vector where the correctly ordered functions and their calculations will be kept.
     std::vector < std::string > operators = {"(", ")", "^", "*", "/", "+", "-", "="}; //makes a vector to hold operators
     std::vector < std::string > trigFunctions = {"sin", "cos", "tan", "sec", "csc", "cot"}; //vector to hold trig functions
+    std::vector < std::string > logFunctions = {"log", "ln"}; //vector to hold log functions
     std::vector < std::string > subExpression; //a temporary vector to hold the subexpressions inside of parenthesis
     std::vector < std::string > subResults; //a temporary vector to hold the subexpressions reduced form
 
@@ -61,7 +62,7 @@ std::vector < std::string > pemdas(std::vector<std::string> inputVector, int ope
     }
 
     std::vector < std::vector < std::string > > operatorPriority = { //this is a vector of vectors, the inner vectors contain equal priority operators
-        {"sin", "cos", "tan"}, //Tier 0
+        {"sin", "cos", "tan", "sec", "csc", "cot", "log", "ln"}, //Tier 0
         {"^"},          //Tier 1 
         {"*", "/"},     //Tier 2
         {"+", "-"},     //Tier 3
@@ -89,7 +90,7 @@ std::vector < std::string > pemdas(std::vector<std::string> inputVector, int ope
             bool hasLeftValue = false; //creates a true false bool incase we are dealing with a trig function that has no value to the left
 
 
-            if (tieBreaker > 0 && !containsString(op, trigFunctions)) { //if the operator is not a trig function
+            if (tieBreaker > 0 && !containsString(op, trigFunctions) && !containsString(op, logFunctions)) { //if the operator is not a trig function or log function
                 leftValue = inputVector[tieBreaker - 1]; //grab the actual number/token on the left
                 hasLeftValue = true; //mark that we consumed a left token
             }

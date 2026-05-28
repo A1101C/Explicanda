@@ -48,7 +48,7 @@ double evaluator(std::vector < std::string> orderedVector) { //define the evalua
             }
         }
         else */
-                
+
         if (opSymbol == "^") { //if its not a whole integer for the power I will figure that out later
             tempResult = std::pow(leftNum, rightNum);
         }
@@ -72,6 +72,14 @@ double evaluator(std::vector < std::string> orderedVector) { //define the evalua
         }
         if (opSymbol == "cot") {
             tempResult = 1.0 / std::tan(rightNum); 
+        }
+
+        if (opSymbol == "log") { //if it is a log function we pass it through as base 10 to the hardware level log calculator
+            tempResult = std::log10(rightNum);
+        }
+        
+        if (opSymbol == "ln") {
+            tempResult = std::log(rightNum); //this passes log base e or ln functions to the hardware calculator
         }
 
         //these all evaluate operators as normal by using machine language commands as this is as far down as I can go in C++
