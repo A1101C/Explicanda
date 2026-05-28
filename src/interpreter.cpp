@@ -39,6 +39,7 @@ double evaluator(std::vector < std::string> orderedVector) { //define the evalua
         }
 
         double tempResult = 0.0; //initializes a temporary double to store the value of our calculation
+        
         /*if (opSymbol == "^" && 1 < static_cast<int>(std::floor(rightNum))) { // if its exponential and to a higher power than 1
             double tempResult = 1.0; //set tempResult to 1 so we can use it in multiplication
             int power = static_cast<int>(std::floor(rightNum)); //make the power a whole integer rounded down
@@ -47,9 +48,32 @@ double evaluator(std::vector < std::string> orderedVector) { //define the evalua
             }
         }
         else */
+                
         if (opSymbol == "^") { //if its not a whole integer for the power I will figure that out later
             tempResult = std::pow(leftNum, rightNum);
         }
+
+        if (opSymbol == "sin") { //if its a trig function then we should have trigfunctions 7 or something 
+            tempResult = std::sin(rightNum); //this passes the trigfunctions and number to the hardware level trig calculators
+        }
+        if (opSymbol == "cos"){
+             tempResult = std::cos(rightNum);
+        }
+        if (opSymbol == "tan"){
+             tempResult = std::tan(rightNum);
+        }
+        
+        //if the opSymbol is an inverse trig function that is just 1.0/standard trig function of right number
+        if (opSymbol == "sec") {
+            tempResult = 1.0 / std::cos(rightNum); 
+        }
+        if (opSymbol == "csc") {
+            tempResult = 1.0 / std::sin(rightNum); 
+        }
+        if (opSymbol == "cot") {
+            tempResult = 1.0 / std::tan(rightNum); 
+        }
+
         //these all evaluate operators as normal by using machine language commands as this is as far down as I can go in C++
         if (opSymbol == "*") tempResult = leftNum * rightNum;
         if (opSymbol == "/") tempResult = leftNum / rightNum;

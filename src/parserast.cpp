@@ -12,6 +12,7 @@
 std::vector < std::string > pemdas(std::vector<std::string> inputVector, int operatorCount, int& opCounter) {
     std::vector < std::string > orderedVector; //creates the vector where the correctly ordered functions and their calculations will be kept.
     std::vector < std::string > operators = {"(", ")", "^", "*", "/", "+", "-", "="}; //makes a vector to hold operators
+    std::vector < std::string > trigFunctions = {"sin", "cos", "tan", "sec", "csc", "cot"}; //vector to hold trig functions
     std::vector < std::string > subExpression; //a temporary vector to hold the subexpressions inside of parenthesis
     std::vector < std::string > subResults; //a temporary vector to hold the subexpressions reduced form
 
@@ -38,20 +39,18 @@ std::vector < std::string > pemdas(std::vector<std::string> inputVector, int ope
 
         std::string tempToken; //declare the tempToken string
 
-        int subOpCount = operatorCounter(subExpression); //gets the operator count for the sub expression
-        subResults = pemdas(subExpression, subOpCount, opCounter); //passes that new sub expression with its operator count back into the multi pass parser, and because it should not have any parenthesis inside it it will skip the parenthesis check
-        
-        if (!subResults.empty()) { //if the subresult is not empty
-            tempToken = subResults.back(); //the current tempToken equals the inner expression of subresults
+        if (!subResults.empty()) { //makes sure that the subexpression is not empty
+            tempToken = subResults.back(); //grabs the last token generated
         }
-        else { //if subresults ran but is "empty" that means there are no operators in it but it might have a single number like if it were (4)
-            tempToken = subExpression[0]; //
+        else { //if subResults is empty it means there were no operators inside the parenthesis so its just a number like 4 or something
+            tempToken = subExpression[0]; //sets our placeholder token directly to that single number string inside the parenthesis
         }
+
         //now we need to delete the strings from the input vector that we have pulled out
         //std::string tempToken = "T" + std::to_string(opCounter); //makes a temporary token based on the number of operators we have parsed through
         //opCounter ++; //increments the opCounter
 
-        inputVector.erase( //erase the sub expression from the 
+        inputVector.erase( //erase the sub expression from the inputVector
             inputVector.begin() + openParenthesis, // the vector.function(); functions uses the range as [start, stop) so it includes the first option but excludes the last one
             inputVector.begin() + closedParenthesis + 1 // + 1 ensures we erase the closed parenthesis too
         );
@@ -62,10 +61,11 @@ std::vector < std::string > pemdas(std::vector<std::string> inputVector, int ope
     }
 
     std::vector < std::vector < std::string > > operatorPriority = { //this is a vector of vectors, the inner vectors contain equal priority operators
-        {"^"},          //Tier 0 
-        {"*", "/"},     //Tier 1
-        {"+", "-"},     //Tier 2
-        {"="},          //Tier 3
+        {"sin", "cos", "tan"}, //Tier 0
+        {"^"},          //Tier 1 
+        {"*", "/"},     //Tier 2
+        {"+", "-"},     //Tier 3
+        {"="},          //Tier 4
     };
 
     //now insert items into the orderedVector from the inputVector by the order of operations 
@@ -80,24 +80,44 @@ std::vector < std::string > pemdas(std::vector<std::string> inputVector, int ope
                     break; //immediately stop because we found the left most operator
                 }
             }
-        
 
             //this is the reduction part to remove from input function and put in orderedVector in the right order
             std::string op = inputVector[tieBreaker]; //sets our tokens from the inputvector to other temporary tokens based on their position in relation to the operator
-            std::string leftValue = inputVector[tieBreaker - 1];
+            std::string leftValue = "0"; //left value is 0 by default and only if we are not evaluating a trig function will it assign a value to it
             std::string rightValue = inputVector[tieBreaker + 1];
+            
+            bool hasLeftValue = false; //creates a true false bool incase we are dealing with a trig function that has no value to the left
+
+
+            if (tieBreaker > 0 && !containsString(op, trigFunctions)) { //if the operator is not a trig function
+                leftValue = inputVector[tieBreaker - 1]; //grab the actual number/token on the left
+                hasLeftValue = true; //mark that we consumed a left token
+            }
 
             std::string tempToken = "T" + std::to_string(opCounter); //makes a temporary token based on the number of operators we have parsed through
             opCounter++;
+
+            if (config::debugMode) { //prints the inputFunction for the cleaner to the console if debug is true
+                std::cout << "op = " << op << " \n";
+                std::cout << "LV = " << leftValue << " \n";
+                std::cout << "RV = " << rightValue << " \n";
+                }
+                std::cout << std::endl;
 
             orderedVector.push_back(leftValue); //add the value to the left to the end of the ordered vector
             orderedVector.push_back(op); //add the operator to the end of the ordered vector
             orderedVector.push_back(rightValue); //add the value to the right to the end of the ordered vector
             orderedVector.push_back("->"); //add an arrow indicating what placeholder value the removed part of the expression is equal to
             orderedVector.push_back(tempToken); //add the placeholder value that the expression is equal to
-          
-            inputVector.erase(inputVector.begin() + tieBreaker - 1, inputVector.begin() + tieBreaker + 2); //erase the three components left, op, and right
-            inputVector.insert(inputVector.begin() + tieBreaker - 1, tempToken); //put the temporary token exactly where the left value used to be in the input function
+
+            if (hasLeftValue) {
+                inputVector.erase(inputVector.begin() + tieBreaker - 1, inputVector.begin() + tieBreaker + 2);  //erase the three components left, op, and right
+                inputVector.insert(inputVector.begin() + tieBreaker - 1, tempToken); //put the temporary token exactly where the left value used to be in the input function
+            }
+            else {
+                inputVector.erase(inputVector.begin() + tieBreaker, inputVector.begin() + tieBreaker + 2); //now only erases 2 tokens from the vector pool because it had a trig function
+                inputVector.insert(inputVector.begin() + tieBreaker, tempToken); 
+            }
 
             /*the above will take an input vector like:
             [3], [*], [x], [+], [4], [/], [3], [-], [1],

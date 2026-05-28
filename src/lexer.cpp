@@ -52,23 +52,19 @@ std::vector < std::string > lexer(std::string inputFunction) {
             bool foundTrig = false; //because I wrapped the if statement for finding trig functions in a for loop I need a way to tell the next else if to skip
             bool foundLog = false; //because I wrapped the if statement for finding log functions in a for loop I need a way to tell the next else if to skip
 
-            for (int i = 0; i < trigFunctions.size(); i++) { //creates a loop that can loop through the entire trig function vector based on the size of the vector
-                if (nextThree == trigFunctions[i]) { //determines if the next three characters are a trigFunction
-                    lexedTokens.push_back(nextThree); //add the entire next three string we just made to the vector
-                    nextThree.clear(); //now clear the token so that we can collect another one
-                    foundTrig = true; //this will make the foundTrig if statement return true and skip remaining checks for inputFunction[n] and prevent the last else from adding 1 after this adds 3
-                    n += 3; //advance to the next position in the inputFunction after the found trig function
-                    /*if (inputFunction[n] == 'x') { //if the next char is x
-                        lexedTokens.push_back("("); //add ( to the token vector before the x
-                        lexedTokens.push_back("x"); //add x to the token vector
-                        lexedTokens.push_back(")"); //add ) to the token vector after the x
-                        n += 1; //advance to the next position 
-                    } */ //commented out due to an issue with the parser and sinx
-                    break; //breaks the loop the moment a match is found
+            for (const std::string& trig : trigFunctions) {   //check if the length of the string is long enough to be a trig function
+                if (n + trig.length() <= inputFunction.length() && inputFunction.substr(n, trig.length()) == trig) { //makes sure input Function is long enough to have a trig function, and loops through the trig function vector to determine if one exists in the inputFunction and assigns it to trig
+                    lexedTokens.push_back(trig); //put the trig substring in the lexedTokens vector
+                    
+                    n += trig.length(); //skips n to go past the length of the trig function
+                    foundTrig = true; //found trig is true
+                    break; //immediately leave the if and for loops
                 }
             }
 
-            if (foundTrig) { } //do nothing, this just skips the following else if and else statements if true and runs them if false
+            if (foundTrig) { 
+                continue; //skip back to the top
+            } 
 
             for (int i = 0; i < logFunctions.size(); i++) { //creates a loop to look through the log function vector
                 if (nextThree == logFunctions[i]) { //determines if the next 3 characters contain a log function
