@@ -9,6 +9,8 @@ const port = 8080; //defines the port to listen on
 
 app.use(express.json()); //tells express to use a middleware to translate information between the backend and front end
 
+app.use(express.static(path.join(__dirname, '../frontend'))); //tells express to look in the /frontend folder to find the webGUI
+
 app.post('/api/evaluate', (req, res) => { //tels the server to listen for POST requests. /api/evaluate is the endpoint and throws the req into it and response back
     const { expression } = req.body; //saves the body of the request as expression
 

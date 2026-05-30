@@ -94,5 +94,12 @@ lexer.cpp               Step 3: tokenizing
 parserast.cpp           Step 4: Multi Pass Parser
 interpreter.cpp         Step 5: Evaluator
 
-portal/                 Future web GUI or API
-data/                   Future database files
+portal/                 API
+package-lock.json
+package.json
+server.js               The actual node.js api talking to the engine
+
+frontend                the webGUI
+index.html              the html for the webGUI
+script.js               javascript for the interactive calculator
+style.css               defines what the actual webpage looks like

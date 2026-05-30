@@ -1,0 +1,11 @@
+#node.js dependencies
+node_modules/
+npm-debug.log
+
+#compiled C++ binaries and build output
+output/
+bin/
+*.o
+*.obj
+*.exe
+*.out

@@ -109,21 +109,6 @@ double interpreter(std::vector < std::string > orderedVector) { //define the int
         std::cout << std::endl;
     }
 
-    if (containsString("x", orderedVector)){ //if there is an x in the function
-        std::cout << "What value of X should be solved for"; 
-        std::string xvalue;
-        std::cin >> xvalue; //get an x value to solve for
-        std::vector < std::string > xvector; //initializes a vector to hold x so we can check it against the orderedVector
-        xvector.push_back("x"); //puts x in the xvector
-        while(containsAny(xvector, orderedVector)){ //while the input vector contains any strings from the current priority list
-            for (int n = 0; n < orderedVector.size(); n++ ) { //look left to right for the function
-                if (containsString("x", orderedVector)) { //if the current string from ordered vector is x
-                    replaceAll(orderedVector[n], "x", xvalue); //replace x with xvalue
-                }
-            }
-        }
-    }
-
     solution = evaluator(orderedVector);
 
     if (config::debugMode) { //if debugmode
