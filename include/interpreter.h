@@ -5,6 +5,6 @@
 #include <vector> //imports the vector
 
 //this says that the parser function will take a vector of strings, and return a double
-double interpreter(std::vector < std::string > inputFunction, bool graphing ); 
+double interpreter(std::vector < std::string > inputFunction); 
 
 #endif

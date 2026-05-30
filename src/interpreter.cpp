@@ -98,11 +98,10 @@ double evaluator(std::vector < std::string> orderedVector) { //define the evalua
 }
 
 
-double interpreter(std::vector < std::string > orderedVector, bool graphing) { //define the interpreter
+double interpreter(std::vector < std::string > orderedVector) { //define the interpreter
     double solution = 0.0; //initialize a double to hold the solution
 
     if (config::debugMode) { //prints the following if debug is true
-        std::cout << "graphing = " << graphing << " \n"; 
         std::cout << "Interpreter starts with: ";
         for (const std::string& token : orderedVector) {
             std::cout << "[" << token << "], ";
@@ -110,7 +109,7 @@ double interpreter(std::vector < std::string > orderedVector, bool graphing) { /
         std::cout << std::endl;
     }
 
-    if (containsString("x", orderedVector) && !graphing){ //if there is an x in the function and graphing is not true 
+    if (containsString("x", orderedVector)){ //if there is an x in the function
         std::cout << "What value of X should be solved for"; 
         std::string xvalue;
         std::cin >> xvalue; //get an x value to solve for

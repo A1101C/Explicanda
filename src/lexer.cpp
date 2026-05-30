@@ -66,7 +66,6 @@ std::vector < std::string > lexer(std::string inputFunction) {
                 continue; //skip back to the top
             } 
 
-            bool foundLog = false; // creates a bool to track logs
             for (const std::string& log : logFunctions) {
                 if (n + log.length() <= inputFunction.length() && inputFunction.substr(n, log.length()) == log) {//makes sure input Function is long enough to have a log, and loops through the log function vector to determine if one exists in the inputFunction and assigns it to log
                     lexedTokens.push_back(log); // add the matched log token
