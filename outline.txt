@@ -69,23 +69,30 @@ Step 5: Display that graph
 
 
 Directory Outline:
-arithmos-machine/       project folder                    
+arithmos-machine/       project folder
+
+main.cpp                the main entrypoint
+
+/output                 The Folder to hold the compiled binary
+engine
 
 arithmos-core/          THE MATH ENGINE FOLDER
 CMakeLists.txt          The master compilation instructions
 
 include/                blueprint .h files
-engine.h                Step 6: The clean API wrapper
-lexer.h                 Step 3: Token definitions & setup
-parser.h                Step 4: AST node structures
-evaluate.h              Step 5: Evaluator to flip through the AST nodes
+config.h                contains the debug and print steps variables
+utils.h                 contains my defined tools and utilities for re-use
+cleaner.h               
+lexer.h                 
+parserast.h                
+interpreter.h              
 
 src/                    actual C++ logic
 main.cpp                Step 1: CLI input testing sandbox   
-engine.cpp              Integrates step 3, 4, 5 together by calling them when step one passes something to them
-lexer.cpp               Step 3: Character loops & tokenizing
-parser.cpp              Step 4: Shunting-Yard
-evaluate.cpp            Step 5: Evaluator
+cleaner.cpp             Step 2: Cleans the input
+lexer.cpp               Step 3: tokenizing
+parserast.cpp           Step 4: Multi Pass Parser
+interpreter.cpp         Step 5: Evaluator
 
-arithmos-portal/         Future web GUI or API
-data/                    Future database files
+portal/                 Future web GUI or API
+data/                   Future database files

@@ -4,34 +4,42 @@
 #include <cctype> //needed for isalpha
 #include <string> //imports the string library
 #include <vector> //imports the vector
+#include <cstdlib>   //imports atof to convert a string to a double
+
 #include "config.h" //includes the config file containing debug variables
 #include "cleaner.h" //includes the cleaner.h which defines the cleaner function in cleaner.cpp
 #include "lexer.h" //includes the lexer.h file defining the lexer
 #include "parserast.h" //includes the parser and ast file
 #include "interpreter.h" //includes the interpreter.h file defining the interpreter
 
-int main() {    //this is the main fuction, int means that it will return an int value to whatever ran it, 0 means success and 1 means failure
+int main(int argCount, char*argVector[]) {    //this is the main fuction, int means that it will return an int value to whatever ran it, 0 means success and 1 means failure
+//arg count is the number of arguments going in, argString is the actual user input function
 
-    //Obtain the User Function to be Evaluated
+    if (argCount < 2) {
+        std::cerr << "{\"error\": \"No expression provided. Usage: ./engine [expr] or ./engine [expr] [minX] [maxX] [step]\"}\n";
+        return 1; //exit safely instead of trying to read empty arguments
+    }
 
-    std::string messyFunction; //declares a string variable to hold the user's input
-    std::cout << "Please enter the function or expression to be evaluated: "; //asks the user to input a function to be evaluated
-    std::getline(std::cin, messyFunction); //gets the user's input and stores it in the variable messyFunction
-    std::cout << "You entered: "; std::cout << messyFunction << std::endl; //outputs the user's input back to them
+    std::string messyFunction = argVector[1]; //defines the messy expression as the first argument for the input passed by the api
 
-    std::string cleanFunction; //declares a string variable to hold a cleaned up input
-    cleanFunction = cleaner(messyFunction);
+    //safely preload variables for when only graphing
+    double xMin = 0.0;
+    double xMax = 0.0;
+    double xSteps = 0.0;
 
-    std::vector < std::string > tokenizedFunction;
-    tokenizedFunction = lexer(cleanFunction);
+    //load the actual variables if they exist
+    if (argCount >= 5) {
+        double xMin = std::atof(argVector[2]); //states the xMin is the second input
+        double xMax = std::atof(argVector[3]); //states the xMax is the third input
+        double xSteps = std::atof(argVector[4]); //states the xSteps is the fourth input
+    }
 
-    std::vector < std::string > parsedFunction;
-    parsedFunction = parserast(tokenizedFunction);
 
-    bool graphing = false;
+    std::string cleanFunction = cleaner(messyFunction); //declares a string variable to hold a cleaned up input and gets the cleanFunction by passing the messy function to the cleaner
+    std::vector < std::string > tokenizedFunction = lexer(cleanFunction); //declares a vector of string variables to hold the tokens for the input and gets the tokens by passing the function to the lexer
+    std::vector < std::string > parsedFunction= parserast(tokenizedFunction); //declares a vector of string variables to hold a cleaned up input and parses the function by passing the tokens to the parser
+    double solution = interpreter(parsedFunction); //declares a double to hold the solution and solves the expresion by passing the parsed tokens to the interpreter
 
-    double solution;
-    solution = interpreter(parsedFunction, graphing);
 
     if (config::debugMode) { //prints the messy function and clean function if debug mode is true
         std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << " \n";
@@ -45,30 +53,10 @@ int main() {    //this is the main fuction, int means that it will return an int
             std::cout << "[" << token << "], ";
         }
         std::cout << std::endl;
-
         std::cout << "solution is: "<< solution << " \n";
     }
 
-    //Determine the type of calculation to be preformed
-
-    char userChoice; //initializes a character variable for the users choice
-
-    std::cout << "What kind of Calculation should be preformed? \n" 
-              << "(A)rithmetic such as +, -, *, \n"
-              << "(G)raphing a function of x. \n"
-              << "(C)AS, solving for x. \n"
-              << "(D)erivative with respect to x. \n"
-              << "(I)ntegrate with respect to x. \n"
-              << "Enter a (N)ew function. \n"
-              << "(Q)uit. \n"
-              << "Choice: " << std::endl;
-    std::cin >> userChoice; //gets the user's choice and stores it in the character variable userChoice
-
-/*    switch (userChoice) {
-        case 'A':
-        case 'a':
-        
-    }*/
+    
 
     return 0;
 }
