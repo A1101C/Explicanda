@@ -2,8 +2,8 @@
 #define CONFIG_H
 
 namespace config {
-    inline bool debugMode = true; 
-    inline bool showSteps = true;
+    inline bool debugMode = false; 
+    inline bool showSteps = false;
 }
 
 #endif

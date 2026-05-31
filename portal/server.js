@@ -5,7 +5,7 @@ const { execFile } = require('child_process'); //built in node.js tool to talk t
 const path = require('path'); //handles universal pathing by making / and \ depending on the OS
 
 const app = express(); //starts the node.js express framework
-const port = 8080; //defines the port to listen on
+const port = 80; //defines the port to listen on
 
 app.use(express.json()); //tells express to use a middleware to translate information between the backend and front end
 

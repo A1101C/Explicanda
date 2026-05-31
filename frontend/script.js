@@ -22,7 +22,7 @@ async function sendExpression() { //defines sendExpression and lets it run async
         resultContainer.classList.remove('hidden'); //accesses the css classes to grab the class hidden
 
         
-        const response = await fetch('http://localhost:8080/api/evaluate', { //references the evaluation response to be fetched as response and awaits for it
+        const response = await fetch('http://localhost:80/api/evaluate', { //references the evaluation response to be fetched as response and awaits for it
             method: 'POST', //uses post to talk to the api
             headers: {
                 'Content-Type': 'application/json' //tells the middleware that this data is being sent as json
