@@ -56,6 +56,6 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
         std::cout << "solution is: "<< solution << " \n";
     }
     
-    std::cout << "solution is: "<< solution << " \n";
+    std::cout <<solution;
     return 0;
 }
