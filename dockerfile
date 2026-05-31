@@ -29,6 +29,9 @@ RUN cd /arithmos-machine/portal && npm install
 COPY portal/ /arithmos-machine/portal/
 COPY frontend/ /arithmos-machine/frontend/
 
+#copy the compiled binary to the folder
+COPY --from=cpp-builder /arithmos-machine/output/engine /arithmos-machine/output/engine
+
 #ensure the node process has permission to run the compiled C++ binary
 RUN chmod +x /arithmos-machine/output/engine
 
