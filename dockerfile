@@ -8,8 +8,8 @@ WORKDIR /arithmos-machine
 
 #copy the source files to the current directory
 COPY main.cpp /arithmos-machine/
-COPY ./src/*.cpp /arithmos-machine/src/
-COPY ./include/*.h /arithmos-machine/include
+COPY ./src/* /arithmos-machine/src/
+COPY ./include/* /arithmos-machine/include
 
 #creates the output folder and compiles the binary to it
 RUN mkdir -p output && \
