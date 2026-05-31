@@ -4,16 +4,16 @@
 FROM gcc:12.2 AS cpp-builder
 
 #set up a workspace folder for building
-WORKDIR /arithmos-machine
+WORKDIR /arithmos-machine/src/
 
 #copy the source files to the current directory
-COPY main.cpp /arithmos-machine/
+COPY main.cpp /arithmos-machine/src/
 COPY ./src/* /arithmos-machine/src/
-COPY ./include/* /arithmos-machine/include
+COPY ./include/* /arithmos-machine/src/
 
 #creates the output folder and compiles the binary to it
 RUN mkdir -p output && \
-    g++ -std=c++17 -O3 main.cpp src/*.cpp -I ./include -o output/engine
+    g++ -std=c++17 -O3 main.cpp cleaner.cpp lexer.cpp parserast.cpp interpreter.cpp -I *.h -o output/engine
 
 #build the node.js API web hub with a tiny linux layer with nodejs 18 pre installed
 FROM node:18-slim
@@ -30,7 +30,7 @@ COPY portal/ /arithmos-machine/portal/
 COPY frontend/ /arithmos-machine/frontend/
 
 #copy the compiled binary to the folder
-COPY --from=cpp-builder /arithmos-machine/output/engine /arithmos-machine/output/engine
+COPY --from=cpp-builder /arithmos-machine/src/output/engine /arithmos-machine/output/engine
 
 #ensure the node process has permission to run the compiled C++ binary
 RUN chmod +x /arithmos-machine/output/engine
