@@ -11,7 +11,7 @@ My goal was to improve my software development abilities and learn about computa
 The project utilizes a decoupled multi language stack to optimize the computation execution speed and web accessibility. 
 
 ## Dependencies
-As of right now the only dependency is a C++ compiler. Everything else has been build by me and the dockerfile actually imports g++ compiler to compile the binary for your system. if you chose to build the binary yourself make sure your build command looks something like:
+As of right now the only dependencies are a C++ compiler, node.js, and npm if you plan to build the tool yourself. Everything else has been build by me and the dockerfile actually imports g++ compiler to compile the binary for your system and and npm and node.js to build the API. So the docker deployment is the easiest route. if you choose to build the binary yourself make sure your build command looks something like:
 
 ```
 g++ -std=c++17 -O3 main.cpp cleaner.cpp lexer.cpp parserast.cpp interpreter.cpp -I *.h -o output/engine
@@ -60,6 +60,8 @@ You can also feed an input directly to the binary by navigating to the /output f
 ./engine "your expression here"
 ```
 Just replace the text with an expression like 3+5*2 and it will print to the terminal the answer "13"
+
+You can set debugMode = true; in the config.h file to get a print out of the start and end of each step in the calculator as well as some other useful information if you are accessing the binary  directly with ./engine, but debugMode = false; must be set when you compile it for deployment as the additional outputs may cause issues with the webgui.
 
 # Development and Goals
 ## History
