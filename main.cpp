@@ -39,18 +39,22 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
     // if we dont have all 5 arguments and it doesn't contain x then simply solve the expression
     bool containsX = false; //initializes the bool
 
-    if (containsString("x", parsedFunction) == true){ //checks if the string contains an x
-        bool containsX = true; //if it does then it sets the variable to true
+    if (containsString("x", parsedFunction) ==true || containsString("X", parsedFunction) == true) { //checks if the string contains an x
+        containsX = true; //if it does then it sets the variable to true
     }
 
-    if (argCount < 4 && !containsX) { 
+    if (!containsX) { //it does not contain x at any point then calculate it as a regular expression
         solution = interpreter(parsedFunction); //solves the expresion by passing the parsed tokens to the interpreter
         std::cout << solution << std::endl; //if we can just solve it then print/return it to the
+
+        if (!config::debugMode){ //if we aren't debugging we can just exit after this
+            return 0;
+        }
     }
 
     //if we do have all 5 arguments then we can calculate values for our graph, to start I will make it generate a vector of values within our xMin and xMax, then calculate the solution for each x value
     //I want to be able to play with the step size between x values to see how long it takes to calculate a large number of values
-    if (argCount >= 4) {
+    else if (argCount >= 2 && containsX) {
         
         //load the actual variables if they exist
         double xMin = std::stod(argVector[2]); //states the xMin is the second input
@@ -68,6 +72,15 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
         std::vector < std::pair < double, double >> yInt; //initializes a vector of pairs to hold the yInt
         yInt = graphpoints(parsedFunction, 0.0, 1.0, 1.0);
         solution = yInt[0].second;
+
+        if (!config::debugMode){ //if we aren't debugging we can just exit after this
+            return 0;
+        }
+    }
+
+    else { //if it does not fall into the above categories then it is not going to work
+        std::cerr << "{\"error\": \"We ran into an unexpected error. Please try again in a moment\"}\n";
+        return 1; //exit safely instead of trying to read empty arguments
     }
 
     if (config::debugMode) { //prints the messy function and clean function if debug mode is true
