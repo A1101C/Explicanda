@@ -45,4 +45,24 @@ inline int operatorCounter(const std::vector<std::string>& inputVector) {
     return operatorCounter; //pass the operator count back out of the function
 }
 
+//takes a vector, a string to be replaced, and what to replace it with
+inline std::vector<std::string> replaceStrings(const std::vector<std::string>& vectorIn, const std::string& oldStr, const std::string& newStr) { 
+    std::vector<std::string> vectorOut; // Initializes the vector to hold the output
+    
+    //use const std::string& because vectorIn is constant
+    for (const std::string& str : vectorIn) {  
+        //use == for comparison, and compare str directly to oldStr
+        if (str == oldStr) { 
+            vectorOut.push_back(newStr); //if it matches push the new string
+        } else {
+            vectorOut.push_back(str);    //else keep the original string
+        }
+    }
+    return vectorOut;
+}
+
+namespace utils {
+    inline constexpr double epsilon = 1e-12; //define epsilon for double accuracy, constexpr makes it be evaluated at compile time so it is fast
+}
+
 #endif
