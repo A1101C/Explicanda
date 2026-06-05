@@ -37,7 +37,7 @@ std::vector < std::string > lexer(std::string inputFunction) {
             n++; //advance to the next position in the inputFunction
         }
 
-        //now find out if the next character is a character
+        //now find out if the next character is alpha
         else if (std::isalpha(currentChar)) {
         
             std::string nextThree; //creates a string to hold the next 3 characters
@@ -80,12 +80,19 @@ std::vector < std::string > lexer(std::string inputFunction) {
                 continue; // jump back to the top
             }  
 
-            else if (currentChar == 'x' || currentChar == 'e' ) { //if the next token is an x or e
-                lexedTokens.push_back("*"); //add * to the token vector before the x or e
-                //lexedTokens.push_back("("); //add ( to the token vector before the x or e
+            else if (currentChar == 'x' || currentChar == 'X' || currentChar == 'e' ) { //if the next token is an x or e
+                if (currentChar == 'X'){
+                    currentChar == 'x'; //if x is upper case replace it with lower case
+                }
+
+                char lastChar(inputFunction[n - 1]); //declares a pointer called lastChar and makes it hold the value of the previous item in the inputFunction
+                
+                if (std::isdigit(lastChar)) { //if the last character was a digit
+                    lexedTokens.push_back("*"); //add * to the token vector before the x or e
+                }
+                
                 currentToken.push_back(currentChar); //add it to the currentChar string
                 lexedTokens.push_back(currentToken); //add the currentToken to the token vectors
-                //lexedTokens.push_back(")"); //add ) to the token vector after the x or e
 
                 if (n + 1 < inputFunction.length()) { //if the next position exists
                     std::string nextChar(1, inputFunction[n + 1]); //make it equal to the string nextChar, the (1,inputFunction) is to say that the char we are pulling from input function is the 1st character in the string nextChar
@@ -116,7 +123,7 @@ std::vector < std::string > lexer(std::string inputFunction) {
         }
     }
 
-    if (config::debugMode) { //prints the inputFunction for the cleaner to the console if debug is true
+    if (config::debugMode) { //prints the lexedTokens for the cleaner to the console if debug is true
         std::cout << "Lexer Finished with tokens:   ";
         for (const std::string& token : lexedTokens) {
             std::cout << "[" << token << "], ";
