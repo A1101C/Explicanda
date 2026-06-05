@@ -13,7 +13,7 @@ COPY ./include/* /arithmos-machine/src/
 
 #creates the output folder and compiles the binary to it
 RUN mkdir -p output && \
-    g++ -std=c++17 -O3 main.cpp cleaner.cpp lexer.cpp parserast.cpp interpreter.cpp -I *.h -o output/engine
+    g++ -std=c++17 -O3 *.cpp -I . -o output/engine
 
 #build the node.js API web hub with a tiny linux layer with nodejs 18 pre installed
 FROM node:18-slim
