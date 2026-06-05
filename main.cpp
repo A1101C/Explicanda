@@ -64,6 +64,10 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
         for (int n = 0; n < xyPairs.size(); n++ ) { //for every pair in the xyPairs vector
             std::cout << "(" << xyPairs[n].first << ", " << xyPairs[n].second << ")" << " \n"; //prints each pair as xValue, yValue
         }
+
+        std::vector < std::pair < double, double >> yInt; //initializes a vector of pairs to hold the yInt
+        yInt = graphpoints(parsedFunction, 0.0, 1.0, 1.0);
+        solution = yInt[0].second;
     }
 
     if (config::debugMode) { //prints the messy function and clean function if debug mode is true
