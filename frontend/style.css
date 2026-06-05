@@ -4,7 +4,7 @@ body { /*defines the style rules for the main body tag of the html document, if 
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
 }
 
@@ -70,6 +70,34 @@ button:hover { /*defines the style rules for when the button is being hovered ov
     border-left: 5px solid #28a745;
     border-radius: 4px;
     text-align: left;
+}
+
+#tableContainer {
+    max-height: 300px; /*limits the table height to 300 pixels*/
+    overflow-y: auto;  /*adds a vertical scrollbar only when rows exceed max-height*/
+    margin-top: 15px;  /* Spacing between the summary text and the data grid*/
+    border: 1px solid #ddd; /*optional: adds a subtle border around your data box*/
+    border-radius: 4px;
+}
+
+.points-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+}
+
+.points-table th, .points-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.points-table th {
+    background-color: #f8f9fa;
+    position: sticky; /*x and y value headers pinned to the top while scrolling*/
+    top: 0;
+    color: #333;
+    box-shadow: inset 0 -1px 0 #ddd; /*prevents the border from disappearing under the sticky header*/
 }
 
 .result-box h3 { /*defines the style rules for the results box h3 section of teh html document*/

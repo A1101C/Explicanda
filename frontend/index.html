@@ -22,11 +22,18 @@
             <button id="evaluateBtn">Evaluate</button> <!--gives a button to evaluate the expression -->
         </div> <!-- closes the input section of the document -->
 
+        <div class="graph-inputs"> <!-- a separate container specifically for inputs related to graphing (xMin, xMax, steps) -->
+            <input type="text" id="xMinInput" placeholder="xMin (e.g. 0)" autocomplete="off"> <!-- input field for the starting boundary of the graph's x-axis -->
+            <input type="text" id="xMaxInput" placeholder="xMax (e.g. 10)" autocomplete="off"> <!-- input field for the ending boundary of the graph's x-axis -->
+            <input type="text" id="xCountInput" placeholder="Steps (e.g. 5)" autocomplete="off"> <!-- input field determining how many data points or steps the calculation should cover -->
+        </div> <!-- closes the graph input container -->
+
+
         <div id="resultContainer" class="result-box hidden"> <!--makes a box to hold the result -->
-            <h3>Result:</h3> <!-- grabs the result and puts it in the box -->
-            <p id="resultText"></p> <!--this is a place holder to be overwritten by the actual answer -->
-        </div> <!--closes the box to hold the results -->
-    </div>  <!--closes out the container box -->
+            <h3>Result:</h3> <!--the calculated result will appear -->
+            <p id="resultText"></p> <!--final numerical answer -->
+            <div id="tableContainer"></div> <!-- container intended to hold graph points -->
+        </div> <!-- closes the result container box -->
 
     <script src="script.js"></script> <!--hooks into script.js to run the calculation with the c++ binary -->
 </body> <!--closes the body -->
