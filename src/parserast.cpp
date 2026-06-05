@@ -40,6 +40,9 @@ std::vector < std::string > pemdas(std::vector<std::string> inputVector, int ope
 
         std::string tempToken; //declare the tempToken string
 
+        int operatorCount_subExpression = operatorCounter(subExpression); //this calls the operator count function from the utils
+        subResults = pemdas(subExpression, operatorCount_subExpression, opCounter); 
+
         if (!subResults.empty()) { //makes sure that the subexpression is not empty
             tempToken = subResults.back(); //grabs the last token generated
         }
