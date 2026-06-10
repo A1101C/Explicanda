@@ -19,7 +19,7 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
 
     double solution; //initializes solution as a double
 
-    if (argCount < 1) {
+    if (argCount < 2) {
         std::cerr << "{\"error\": \"No expression provided. Usage: ./engine [expr] or ./engine [expr] [minX] [maxX] [xCount]\"}\n";
         return 1; //exit safely instead of trying to read empty arguments
     }
@@ -54,19 +54,19 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
 
     //if we do have all 5 arguments then we can calculate values for our graph, to start I will make it generate a vector of values within our xMin and xMax, then calculate the solution for each x value
     //I want to be able to play with the step size between x values to see how long it takes to calculate a large number of values
-    else if (argCount >= 2 && containsX) {
+    else if (argCount = 5 && containsX) {
         
         //load the actual variables if they exist
-        double xMin = std::stod(argVector[2]); //states the xMin is the second input
-        double xMax = std::stod(argVector[3]); //states the xMax is the third input
-        double xCount = std::stod(argVector[4]); //states the xCount is the fourth input
+        xMin = std::stod(argVector[2]); //states the xMin is the second input
+        xMax = std::stod(argVector[3]); //states the xMax is the third input
+        xCount = std::stod(argVector[4]); //states the xCount is the fourth input
 
         std::vector < std::pair < double, double >> xyPairs; //initializes a vector of pairs to hold xy values
 
         xyPairs = graphpoints(parsedFunction, xMin, xMax, xCount); //passes the parsedFunction into the graphpoints tool
 
         for (int n = 0; n < xyPairs.size(); n++ ) { //for every pair in the xyPairs vector
-            std::cout << "(" << xyPairs[n].first << ", " << xyPairs[n].second << ")" << " \n"; //prints each pair as xValue, yValue
+            std::cout << "(" << xyPairs[n].first << ", " << xyPairs[n].second << ")" << " \n"; //prints each pair as (xValue, yValue)
         }
 
         std::vector < std::pair < double, double >> yInt; //initializes a vector of pairs to hold the yInt
