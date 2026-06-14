@@ -26,9 +26,9 @@ std::vector < std::string > lexer(std::string inputFunction) {
     for (int n = 0; n < inputFunction.length(); ) { //for every position in the input function
         char currentChar = inputFunction[n]; //the current character is in the n position
 
-        if (std::isdigit(currentChar)) { //if currentChar is a digit
+        if (std::isdigit(currentChar) || currentChar == '.') { //if currentChar is a digit or a decimal place
             currentToken.push_back(currentChar); //add it to the current token
-            while (n + 1 < inputFunction.length() && std::isdigit(inputFunction[n + 1])){ //and as long as the next char exists and is also a number
+            while (n + 1 < inputFunction.length() && (std::isdigit(inputFunction[n + 1]) || inputFunction[n + 1] == '.')){ //and as long as the next char exists and is also a number
                 n++; //this moves n to the next position if it exists and is a digit
                 currentToken.push_back(inputFunction[n]); //add it to the end of the current token
             }
