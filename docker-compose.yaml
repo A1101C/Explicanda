@@ -3,5 +3,5 @@ services:
     image: a1101c/arithmos-machine:latest
     container_name: arithmos-container
     ports:
-      - "80:80"
+      - "4321:4321"
     restart: unless-stopped

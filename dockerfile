@@ -1,45 +1,49 @@
-#compile the C++ Engine
 
-#downloads the GNU compiler collection to use the g++ compiler
+#compile the cpp binary
+
 FROM gcc:12.2 AS cpp-builder
 
-#set up a workspace folder for building
 WORKDIR /arithmos-machine/src/
 
-#copy the source files to the current directory
+#copy cpp source files
 COPY main.cpp /arithmos-machine/src/
 COPY ./src/* /arithmos-machine/src/
 COPY ./include/* /arithmos-machine/src/
 
-#creates the output folder and compiles the binary to it
+#create output folder and compile binary
 RUN mkdir -p output && \
     g++ -std=c++17 -O3 *.cpp -I . -o output/engine
 
-#build the node.js API web hub with a tiny linux layer with nodejs 18 pre installed
+
+
+#build the astro ssr server
+
 FROM node:18-slim
 
-#set working directory for our Node application
 WORKDIR /arithmos-machine/portal/
 
 #copy package properties to install Node modules
-COPY portal/package*.json /arithmos-machine/portal
-RUN cd /arithmos-machine/portal && npm install
+COPY portal/package*.json ./
+RUN npm install
 
-#copy the express portal backend files and frontend interface
-COPY portal/ /arithmos-machine/portal/
-COPY frontend/ /arithmos-machine/frontend/
+#copy all Astro project source files into the container
+COPY portal/ ./
 
-#copy the compiled binary to the folder
+#copy the compiled cpp binary into the parent directory where evaluate.js expects it
 COPY --from=cpp-builder /arithmos-machine/src/output/engine /arithmos-machine/output/engine
 
-#ensure the node process has permission to run the compiled C++ binary
+#ensure the process has permission to run the compiled cpp binary
 RUN chmod +x /arithmos-machine/output/engine
 
-#expose the port the express app listens on
-EXPOSE 80
+#run the astro build command
+RUN npm run build
 
-#set the execution directory to the portal folder where server.js resides
-WORKDIR /arithmos-machine/portal
+#astro's node server defaults to port 4321
+EXPOSE 4321
 
-#command to launch your web engine application
-CMD ["node", "server.js"]
+#set environment variables so astro listens on all network interfaces inside Docker
+ENV HOST=0.0.0.0
+ENV PORT=4321
+
+#command to launch the compiled astro server
+CMD ["node", "./dist/server/entry.mjs"]
