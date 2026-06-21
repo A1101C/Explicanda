@@ -18,7 +18,7 @@ RUN mkdir -p output && \
 
 #build the astro ssr server
 
-FROM node:18-slim
+FROM node:22-slim
 
 WORKDIR /arithmos-machine/portal/
 
