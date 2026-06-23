@@ -5,7 +5,7 @@ const { mode = "scientific" } = Astro.props;
 const isGraphing = mode === "graphing";
 ---
 
-<div class="container">
+<div class="container" data-mode={mode}>
     
     {isGraphing ? (
         <h1>Arithmos Graphing Engine</h1>
@@ -139,13 +139,11 @@ const isGraphing = mode === "graphing";
     function runEvaluationEngine() {
         const container = document.querySelector('.container');
         
-        //query once before any DOM manipulation
         const evaluateBtn = document.getElementById('evaluateBtn');
         const expressionInput = document.getElementById('expressionInput');
 
         if (!evaluateBtn || !expressionInput || !container) return;
 
-        //clone and replace the button to avoid duplicate listeners
         evaluateBtn.replaceWith(evaluateBtn.cloneNode(true));
         const activeBtn = container.querySelector('#evaluateBtn');
 
@@ -163,41 +161,53 @@ const isGraphing = mode === "graphing";
     }
 
     async function sendExpression() {
-        const inputElement = document.getElementById('expressionInput') as HTMLInputElement;
-        const xMinElement = document.getElementById('xMinInput') as HTMLInputElement;
-        const xMaxElement = document.getElementById('xMaxInput') as HTMLInputElement;
-        const xCountElement = document.getElementById('xCountInput') as HTMLInputElement;
-        const resultContainer = document.getElementById('resultContainer');
-        const resultText = document.getElementById('resultText');
-        const tableContainer = document.getElementById('tableContainer');
+    const container = document.querySelector('.container');
+    const mode = container ? container.getAttribute('data-mode') : 'scientific';
 
-        if (!inputElement || !resultText) return;
-        const expressionValue = inputElement.value.trim();
+    const inputElement = document.getElementById('expressionInput') as HTMLInputElement;
+    const xMinElement = document.getElementById('xMinInput') as HTMLInputElement;
+    const xMaxElement = document.getElementById('xMaxInput') as HTMLInputElement;
+    const xCountElement = document.getElementById('xCountInput') as HTMLInputElement;
+    const resultContainer = document.getElementById('resultContainer');
+    const resultText = document.getElementById('resultText');
+    const tableContainer = document.getElementById('tableContainer');
 
-        //optional elements fall back to 0 if they are not on the page
-        const xMinValue = xMinElement ? xMinElement.value.trim() : "0";
-        const xMaxValue = xMaxElement ? xMaxElement.value.trim() : "0";
-        const xCountValue = xCountElement ? xCountElement.value.trim() : "0";
+    if (!inputElement || !resultText) return;
+    const expressionValue = inputElement.value.trim();
 
-        if (!expressionValue) {
-            alert("Please enter a valid expression.");
-            return;
-        }
+    const xMinValue = xMinElement ? xMinElement.value.trim() : "0";
+    const xMaxValue = xMaxElement ? xMaxElement.value.trim() : "0";
+    const xCountValue = xCountElement ? xCountElement.value.trim() : "0";
 
-        try {
-            resultText.innerText = "Evaluating...";
-            if (tableContainer) tableContainer.innerHTML = "";
-            
-            const response = await fetch('/api/evaluate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    expression: expressionValue, 
-                    xMin: xMinValue, 
-                    xMax: xMaxValue, 
-                    xCount: xCountValue 
-                })
-            });
+    if (!expressionValue) {
+        alert("Please enter a valid expression.");
+        return;
+    }
+
+    try {
+    resultText.innerText = "Evaluating...";
+    if (tableContainer) tableContainer.innerHTML = "";
+
+    let calcType = "s";
+
+    if (mode === "graphing") {
+        calcType = "g";
+    }
+    if (mode === "scientific") {
+        calcType = "s";
+    }
+
+    const response = await fetch('/api/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            mode: calcType,
+            expression: expressionValue, 
+            xMin: xMinValue, 
+            xMax: xMaxValue, 
+            xCount: xCountValue 
+        })
+    });
 
             const data = await response.json();
 

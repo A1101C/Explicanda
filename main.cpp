@@ -15,16 +15,28 @@
 
 int main(int argCount, char*argVector[]) {    //this is the main fuction, int means that it will return an int value to whatever ran it, 0 means success and 1 means failure
 //arg count is the number of arguments going in, argVector is the actual user input function
-//the main counts as an argument so it is argVector[0], so a regular expression being solved will have 2 args
+// use is going to change to include a calctype option at the beginning
+// 0 will be the binary being actually called, 1 will be calctype, 2 will be the messy expression, then 3-5 will be the options for graphing
+
+    if (config::debugMode) {
+        std::cout <<"Main started with:"
+        for (n = 0; n < argCount; n++){
+            std::cout << argVector[n];
+        }
+        std::cout  << " \n";
+    }
 
     double solution; //initializes solution as a double
 
     if (argCount < 2) {
-        std::cerr << "{\"error\": \"No expression provided. Usage: ./engine [expr] or ./engine [expr] [minX] [maxX] [xCount]\"}\n";
+        std::cerr << "{\"error\": \"No expression provided. Usage: ./engine [calcType] [expr] or ./engine [calcType] [expr] [minX] [maxX] [xCount]\"}\n";
         return 1; //exit safely instead of trying to read empty arguments
     }
 
-    std::string messyFunction = argVector[1]; //defines the messy expression as the first argument for the input passed by the api
+    std::string calcType = argVector[1]; //defines and stores the calctype option
+        /*s will be used to say its a scientific calculation, g will be graphing. in the future c will be cas, d will be derivative, i will be integral.*/
+
+    std::string messyFunction = argVector[2]; //defines the messy expression as the first argument for the input passed by the api
 
     //safely preload variables for when not graphing
     double xMin = 0.0;
@@ -36,30 +48,34 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
     std::vector < std::string > tokenizedFunction = lexer(cleanFunction); //declares a vector of string variables to hold the tokens for the input and gets the tokens by passing the function to the lexer
     std::vector < std::string > parsedFunction= parserast(tokenizedFunction); //declares a vector of string variables to hold a cleaned up input and parses the function by passing the tokens to the parser
 
-    // if we dont have all 5 arguments and it doesn't contain x then simply solve the expression
+    // we want to check if the function contained an x variable
     bool containsX = false; //initializes the bool
 
     if (containsString("x", parsedFunction) ==true || containsString("X", parsedFunction) == true) { //checks if the string contains an x
         containsX = true; //if it does then it sets the variable to true
     }
 
-    if (!containsX) { //it does not contain x at any point then calculate it as a regular expression
-        solution = interpreter(parsedFunction); //solves the expresion by passing the parsed tokens to the interpreter
-        std::cout << solution << std::endl; //if we can just solve it then print/return it to the
-
+    //if calcType is s
+    if (calcType == "s"){
+        if (containsX){ // and contains an x
+            std::vector < std::string > xFunction = replaceStrings(parsedFunction, "x", "0"); //replace the x in the parsedFunction with 0
+            solution = interpreter(xFunction); //sends the xFunction to the interpreter to be solved for y
+        }
+        else if (!containsX){ //and if it doesn't contain x then just pass it to the evaluator
+            solution = interpreter(parsedFunction);
+        }
         if (!config::debugMode){ //if we aren't debugging we can just exit after this
             return 0;
         }
     }
 
-    //if we do have all 5 arguments then we can calculate values for our graph, to start I will make it generate a vector of values within our xMin and xMax, then calculate the solution for each x value
-    //I want to be able to play with the step size between x values to see how long it takes to calculate a large number of values
-    else if (argCount = 5 && containsX) {
+    //if we are doing a graphing calculation then we can calculate x,y values, to start I will make it generate a vector of values within our xMin and xMax, then calculate the solution for each x value
+    else if (calcType == "g" && containsX) {
         
         //load the actual variables if they exist
-        xMin = std::stod(argVector[2]); //states the xMin is the second input
-        xMax = std::stod(argVector[3]); //states the xMax is the third input
-        xCount = std::stod(argVector[4]); //states the xCount is the fourth input
+        xMin = std::stod(argVector[3]); //states the xMin is the second input
+        xMax = std::stod(argVector[4]); //states the xMax is the third input
+        xCount = std::stod(argVector[5]); //states the xCount is the fourth input
 
         std::vector < std::pair < double, double >> xyPairs; //initializes a vector of pairs to hold xy values
 
