@@ -12,7 +12,7 @@
 std::vector < std::string > lexer(std::string inputFunction) {
 
     if (config::debugMode) { //prints the inputFunction for the lexer to the console if debug is true
-        std::cout << "Lexer started with string inputFunction:   " << inputFunction << std::endl;
+        std::cout << "Lexer Started Successfully" <<std::endl;
     }
 
     std::vector < std::string > lexedTokens; //initializes the vector to hold the tokens
@@ -123,12 +123,8 @@ std::vector < std::string > lexer(std::string inputFunction) {
         }
     }
 
-    if (config::debugMode) { //prints the lexedTokens for the cleaner to the console if debug is true
-        std::cout << "Lexer Finished with tokens:   ";
-        for (const std::string& token : lexedTokens) {
-            std::cout << "[" << token << "], ";
-                }
-        std::cout << std::endl;
+    if (config::debugMode) { //successfully finished debug message
+        std::cout << "Lexer Finished Successfully" <<std::endl;
     }
 
     return lexedTokens;

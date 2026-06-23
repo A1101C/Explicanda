@@ -143,11 +143,7 @@ std::vector < std::string > parserast(std::vector < std::string > inputVector) {
     std::vector < std::string > outputVector;
 
     if (config::debugMode) { //prints the inputVector for the cleaner to the console if debug is true
-        std::cout << "AST started with tokens:   ";
-        for (const std::string& token : inputVector) {
-            std::cout << "[" << token << "], ";
-                }
-        std::cout << std::endl;
+        std::cout << "Parser Started Successfully" <<std::endl;
     }
 
     std::vector < std::string > calcVector; //creates the vector where the correctly ordered functions and their calculations will be kept.
@@ -161,11 +157,7 @@ std::vector < std::string > parserast(std::vector < std::string > inputVector) {
     calcVector = pemdas(inputVector, operatorCount, opCounter);
 
     if (config::debugMode) { //prints the inputFunction for the cleaner to the console if debug is true
-        std::cout << "Parser AST Finished with token order:   ";
-        for (const std::string& token : calcVector) {
-            std::cout << "[" << token << "], ";
-        }
-        std::cout << std::endl;
+        std::cout << "Parser Finished Successfully" <<std::endl;
     }
     
     return calcVector;

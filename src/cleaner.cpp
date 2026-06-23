@@ -13,7 +13,7 @@ std::string cleaner(std::string inputFunction){
     std::string outputFunction; //initializes a string to hold the cleaned outputFunction
 
     if (config::debugMode) { //prints the inputFunction for the cleaner to the console if debug is true
-        std::cout << "Cleaner started with inputFunction:   " << inputFunction << std::endl;
+        std::cout << "Cleaner Started Successfully" <<std::endl;
     }
 
     replaceAll(inputFunction, " ", "");
@@ -30,7 +30,7 @@ std::string cleaner(std::string inputFunction){
     outputFunction = inputFunction;
 
     if (config::debugMode) { //prints the outputFunction for the cleaner to the console if debug is true
-        std::cout << "Cleaner ended with outputFunction:   " << outputFunction << std::endl;
+        std::cout << "Cleaner Finished Successfully" <<std::endl;
     }
 
     return outputFunction; // returns the cleaned function out of the cleaner

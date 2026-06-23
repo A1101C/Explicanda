@@ -18,9 +18,9 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
 // use is going to change to include a calctype option at the beginning
 // 0 will be the binary being actually called, 1 will be calctype, 2 will be the messy expression, then 3-5 will be the options for graphing
 
-    if (config::debugMode) {
-        std::cout <<"Main started with:"
-        for (n = 0; n < argCount; n++){
+    if (config::debugMode) { //if debug mode print the arg vector we started the main with
+        std::cout <<"Main started with:";
+        for (int n = 0; n < argCount; n++){
             std::cout << argVector[n];
         }
         std::cout  << " \n";
@@ -100,6 +100,7 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
     }
 
     if (config::debugMode) { //prints the messy function and clean function if debug mode is true
+        std::cout << "Main finished successfully with:" << " \n";
         std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << " \n";
         std::cout << "Tokenized to:  "; //prints each token inside brackets for our tokenized vector
         for (const std::string& token : tokenizedFunction) {

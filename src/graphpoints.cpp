@@ -26,6 +26,10 @@ std::vector < std::pair < double, double >> graphpoints(const std::vector < std:
                                                                     double xMax, 
                                                                     double xCount) {
 
+    if (config::debugMode){
+        std::cout << "GraphPoints Started Successfully" <<std::endl;
+    }
+
     using utils::epsilon;  //pulls epsilon from the utils namespace into this file
 
     std::vector < std::pair < double, double >> xyPairs; //initializes the tuple to hold all the xy pairs
@@ -70,6 +74,10 @@ std::vector < std::pair < double, double >> graphpoints(const std::vector < std:
 
         xyPairs.push_back({currentX, currentY}); //adds our current x and y as a pair into the vector
 
+    }
+
+    if (config::debugMode){
+        std::cout << "GraphPoints Finished Successfully" <<std::endl;
     }
 
     return xyPairs; //return the vector of xy pairs

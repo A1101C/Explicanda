@@ -102,17 +102,13 @@ double interpreter(std::vector < std::string > orderedVector) { //define the int
     double solution = 0.0; //initialize a double to hold the solution
 
     if (config::debugMode) { //prints the following if debug is true
-        std::cout << "Interpreter starts with: ";
-        for (const std::string& token : orderedVector) {
-            std::cout << "[" << token << "], ";
-        }
-        std::cout << std::endl;
+        std::cout << "interpreter Started Successfully" <<std::endl;
     }
 
     solution = evaluator(orderedVector);
 
     if (config::debugMode) { //if debugmode
-        std::cout << solution << " \n";
+        std::cout << "Interpreter finished with: " << solution << " \n";
     }
 
     return solution;
