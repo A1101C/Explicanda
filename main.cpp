@@ -21,7 +21,7 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
     if (config::debugMode) { //if debug mode print the arg vector we started the main with
         std::cout <<"Main started with:";
         for (int n = 0; n < argCount; n++){
-            std::cout << argVector[n];
+            std::cout << argVector[n] << " ";
         }
         std::cout  << " \n";
     }
@@ -29,7 +29,7 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
     double solution; //initializes solution as a double
 
     if (argCount < 2) {
-        std::cerr << "{\"error\": \"No expression provided. Usage: ./engine [calcType] [expr] or ./engine [calcType] [expr] [minX] [maxX] [xCount]\"}\n";
+        std::cerr << "error: No expression provided. Usage: ./engine [calcType] [expr] or ./engine [calcType] [expr] [minX] [maxX] [xCount]" << "\n";
         return 1; //exit safely instead of trying to read empty arguments
     }
 
@@ -50,20 +50,31 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
 
     // we want to check if the function contained an x variable
     bool containsX = false; //initializes the bool
+    std::vector < std::string > xFunction; //initializes a vector called xFunction to hold the function after we replaced x
 
-    if (containsString("x", parsedFunction) ==true || containsString("X", parsedFunction) == true) { //checks if the string contains an x
+
+    //checks if the string contains an x
+    if (containsString("x", parsedFunction) == true){
         containsX = true; //if it does then it sets the variable to true
     }
+
+    if (containsString("X", parsedFunction) == true){
+            xFunction = replaceStrings(parsedFunction, "X", "x"); //if x is upper case it replaces it with a lower case x
+            containsX = true; //then sets containsX to true
+        }
 
     //if calcType is s
     if (calcType == "s"){
         if (containsX){ // and contains an x
-            std::vector < std::string > xFunction = replaceStrings(parsedFunction, "x", "0"); //replace the x in the parsedFunction with 0
+            xFunction = replaceStrings(parsedFunction, "x", "0"); //replace the x in the parsedFunction with 0
             solution = interpreter(xFunction); //sends the xFunction to the interpreter to be solved for y
         }
         else if (!containsX){ //and if it doesn't contain x then just pass it to the evaluator
             solution = interpreter(parsedFunction);
         }
+
+        std::cout << solution << " \n"; //prints the solution to the console
+
         if (!config::debugMode){ //if we aren't debugging we can just exit after this
             return 0;
         }
@@ -79,7 +90,7 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
 
         std::vector < std::pair < double, double >> xyPairs; //initializes a vector of pairs to hold xy values
 
-        xyPairs = graphpoints(parsedFunction, xMin, xMax, xCount); //passes the parsedFunction into the graphpoints tool
+        xyPairs = graphpoints(xFunction, xMin, xMax, xCount); //passes the parsedFunction into the graphpoints tool
 
         for (int n = 0; n < xyPairs.size(); n++ ) { //for every pair in the xyPairs vector
             std::cout << "(" << xyPairs[n].first << ", " << xyPairs[n].second << ")" << " \n"; //prints each pair as (xValue, yValue)
@@ -95,13 +106,17 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
     }
 
     else { //if it does not fall into the above categories then it is not going to work
-        std::cerr << "{\"error\": \"We ran into an unexpected error. Please try again in a moment\"}\n";
+        std::cerr << "error: This calculation is not supported: Failure in main.cpp" << " /n";
+        for (int n = 0; n < argCount; n++) { //this loop will print an error I can see in the network response page while inspecting payloads and responses
+            std::cerr << argVector[n] << " ";
+        }
+        std::cerr << "/n";
         return 1; //exit safely instead of trying to read empty arguments
     }
 
     if (config::debugMode) { //prints the messy function and clean function if debug mode is true
-        std::cout << "Main finished successfully with:" << " \n";
-        std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << " \n";
+        std::cout << "Main finished successfully with:" << " /n";
+        std::cout << messyFunction << "    Cleaned to:    " << cleanFunction << " /n";
         std::cout << "Tokenized to:  "; //prints each token inside brackets for our tokenized vector
         for (const std::string& token : tokenizedFunction) {
             std::cout << "[" << token << "], ";
@@ -112,7 +127,7 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
             std::cout << "[" << token << "], ";
         }
         std::cout << std::endl;
-        std::cout << "solution is: "<< solution << " \n";
+        std::cout << "solution is: "<< solution << " /n";
     }
     
     return 0;
