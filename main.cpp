@@ -50,8 +50,6 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
 
     // we want to check if the function contained an x variable
     bool containsX = false; //initializes the bool
-    std::vector < std::string > xFunction; //initializes a vector called xFunction to hold the function after we replaced x
-
 
     //checks if the string contains an x
     if (containsString("x", parsedFunction) == true){
@@ -59,15 +57,15 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
     }
 
     if (containsString("X", parsedFunction) == true){
-            xFunction = replaceStrings(parsedFunction, "X", "x"); //if x is upper case it replaces it with a lower case x
+            parsedFunction = replaceStrings(parsedFunction, "X", "x"); //if x is upper case it replaces it with a lower case x
             containsX = true; //then sets containsX to true
         }
 
     //if calcType is s
     if (calcType == "s"){
         if (containsX){ // and contains an x
-            xFunction = replaceStrings(parsedFunction, "x", "0"); //replace the x in the parsedFunction with 0
-            solution = interpreter(xFunction); //sends the xFunction to the interpreter to be solved for y
+            parsedFunction = replaceStrings(parsedFunction, "x", "0"); //replace the x in the parsedFunction with 0
+            solution = interpreter(parsedFunction); //sends the parsedFunction to the interpreter to be solved for the y intercept
         }
         else if (!containsX){ //and if it doesn't contain x then just pass it to the evaluator
             solution = interpreter(parsedFunction);
@@ -81,24 +79,26 @@ int main(int argCount, char*argVector[]) {    //this is the main fuction, int me
     }
 
     //if we are doing a graphing calculation then we can calculate x,y values, to start I will make it generate a vector of values within our xMin and xMax, then calculate the solution for each x value
-    else if (calcType == "g" && containsX) {
+    else if (calcType == "g") {
         
-        //load the actual variables if they exist
-        xMin = std::stod(argVector[3]); //states the xMin is the second input
-        xMax = std::stod(argVector[4]); //states the xMax is the third input
-        xCount = std::stod(argVector[5]); //states the xCount is the fourth input
+        if (containsX){
+            //load the actual variables if they exist
+            xMin = std::stod(argVector[3]); //states the xMin is the second input
+            xMax = std::stod(argVector[4]); //states the xMax is the third input
+            xCount = std::stod(argVector[5]); //states the xCount is the fourth input
 
-        std::vector < std::pair < double, double >> xyPairs; //initializes a vector of pairs to hold xy values
+            std::vector < std::pair < double, double >> xyPairs; //initializes a vector of pairs to hold xy values
 
-        xyPairs = graphpoints(xFunction, xMin, xMax, xCount); //passes the parsedFunction into the graphpoints tool
+            xyPairs = graphpoints(parsedFunction, xMin, xMax, xCount); //passes the parsedFunction into the graphpoints tool
 
-        for (int n = 0; n < xyPairs.size(); n++ ) { //for every pair in the xyPairs vector
-            std::cout << "(" << xyPairs[n].first << ", " << xyPairs[n].second << ")" << " \n"; //prints each pair as (xValue, yValue)
+            for (int n = 0; n < xyPairs.size(); n++ ) { //for every pair in the xyPairs vector
+                std::cout << "(" << xyPairs[n].first << ", " << xyPairs[n].second << ")" << " \n"; //prints each pair as (xValue, yValue)
+            }
+
+            std::vector < std::pair < double, double >> yInt; //initializes a vector of pairs to hold the yInt
+            yInt = graphpoints(parsedFunction, 0.0, 1.0, 1.0);
+            solution = yInt[0].second;
         }
-
-        std::vector < std::pair < double, double >> yInt; //initializes a vector of pairs to hold the yInt
-        yInt = graphpoints(parsedFunction, 0.0, 1.0, 1.0);
-        solution = yInt[0].second;
 
         if (!config::debugMode){ //if we aren't debugging we can just exit after this
             return 0;
