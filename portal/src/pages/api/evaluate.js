@@ -3,15 +3,14 @@ import { execFile } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Node.js ESM workarounds to replicate your original __dirname functionality
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function POST({ request }) {
     try {
-        // Read the incoming JSON body payload from the client-side fetch
         const body = await request.json();
-        const { expression, xMin, xMax, xCount } = body;
+
+        const { mode, expression, xMin, xMax, xCount } = body;
 
         if (!expression) {
             return new Response(JSON.stringify({ error: "No expression provided" }), {
@@ -20,16 +19,14 @@ export async function POST({ request }) {
             });
         }
 
-        // Adjust your path relative to your current file tree location inside Astro
-        // Since this file lives in src/pages/api/, we step up 3 times to get to project root
         const binaryPath = path.join(__dirname, '../../../../output/engine');
-        const args = [expression];
+        
+        const args = [mode || "s", expression];
 
-        if (expression.toLowerCase().includes('x')) {
+        if (mode === "g") {
             args.push(xMin || "0", xMax || "0", xCount || "0");
         }
 
-        // Wrap execFile in a Promise to bridge Express style callbacks with Astro's modern async pipeline
         const result = await new Promise((resolve, reject) => {
             execFile(binaryPath, args, (error, stdout, stderr) => {
                 if (error) {
@@ -38,7 +35,8 @@ export async function POST({ request }) {
                 }
 
                 const points = [];
-                if (expression.toLowerCase().includes('x') && stdout) {
+
+                if (mode === "g" && stdout) {
                     const lines = stdout.split('\n');
                     for (const line of lines) {
                         const match = line.match(/\(([^,]+),\s*([^)]+)\)/);
@@ -57,14 +55,12 @@ export async function POST({ request }) {
             });
         });
 
-        // Return a successful, clean web standard JSON response
         return new Response(JSON.stringify(result), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
 
     } catch (err) {
-        // Handle errors seamlessly during calculation execution
         const status = err.status || 500;
         return new Response(JSON.stringify({ error: err.error || "Internal Server Error", details: err.details || err.message }), {
             status: status,
