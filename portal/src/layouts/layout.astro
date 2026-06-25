@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import Titlebar from '../components/titlebar.astro';
 
-const { title = "Explicanda" } = Astro.props;
+const { title = "Explicanda", description = "", canonical = "" } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -11,6 +11,8 @@ const { title = "Explicanda" } = Astro.props;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
+  {description && <meta name="description" content={description} />}
+  {canonical && <link rel="canonical" href={canonical} />}
     <link rel="icon" type="image/png" href="/favicon.png" />
 </head>
 <body>
