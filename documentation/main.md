@@ -16,28 +16,29 @@ It handles data normalization, tokenization, parsing, and evaluation. It also de
 Arguments are passed to the executable via the command line interface (CLI).
 
 ```bash
-./engine "<expression>" [xMin xMax xCount]
+./engine [calcType] "<expression>" [xMin xMax xCount]
 
 ```
 
 The binary accepts up to **5 arguments** (using standard 0-indexed positioning):
 
 * **Index 0:** The executable path (`./engine`).
-* **Index 1:** The mathematical expression or function of x to evaluate.
-* **Indices 2, 3, 4 (Optional):** The minimum xvalue, maximum xvalue, and total count of points to calculate. These are required if the expression contains the variable x.
+* **Index 1:** The type of calculation to preform, s or g.
+* **Index 2:** The mathematical expression or function of x to evaluate.
+* **Indices 3, 4, 5 (Optional):** The minimum xvalue, maximum xvalue, and total count of points to calculate. These are required if the expression contains the variable x.
 
 ### Valid Argument Examples
 
 * **Static Expression (No Variable):**
 ```bash
-./engine "12^3+4*5-2/3"
+./engine s 12^3+4*5-2/3
 
 ```
 
 
 * **Function of x (With Domain):**
 ```bash
-./engine "12x^3+4x+2/3" -100 100 200
+./engine g 12x^3+4x+2/3 -100 100 200
 
 ```
 
@@ -46,7 +47,7 @@ The binary accepts up to **5 arguments** (using standard 0-indexed positioning):
 * **Single-Point Evaluation:**
 If you only need the result of a function at a single specific value (e.g., x = 24), set the minimum and maximum to that value and the count to `1`:
 ```bash
-./engine "12x^3+4x+2/3" 24 24 1
+./engine g 12x^3+4x+2/3 24 24 1
 
 ```
 
@@ -118,21 +119,29 @@ If the engine verifies all 5 command-line arguments are present, it assigns the 
 ## Visual
 ```mermaid
 graph TD
-  A[main is called] --> B{is argCount >= 2?}
-  B -->|No| D[cerr: No expression provided]
-  D --> Exit[Exit Program]
-
-  B -->|Yes| C[Set messyFunction = argVector1<br>Initialize xMin, xMax, xCount = 0]
-  C --> Pipeline[Run Pipeline:<br>Cleaner -> Lexer -> Parser]
-  Pipeline --> E{Does parsedFunction<br>contain 'x'?}
-
-  E -->|No| Static[Pass to Interpreter<br>Output solution]
-  Static --> Exit
-
-  E -->|Yes| CheckArgs{Are there 5<br>arguments?}
-  CheckArgs -->|Yes| Graph[Load xMin, xMax, xCount<br>Run graphpoints output coordinates<br>Calculate y-intercept]
-  CheckArgs -->|No| Error[cerr: We Ran into an unexpected error.]
-  
-  Graph --> Exit
-  Error --> Exit
-  ```
+  A[main is called] --> B{argCount >= 2?}
+  B -->|No| ErrNoExpr[cerr: No expression provided]
+  ErrNoExpr --> Exit[Exit Program]
+  B -->|Yes| C[Set calcType = argVector1<br>Set messyFunction = argVector2<br>Initialize xMin, xMax, xCount = 0]
+  C --> Pipeline[Run Pipeline:<br>Cleaner → Lexer → Parser]
+  Pipeline --> X{Does parsedFunction<br>contain 'x'?}
+  X -->|Yes, uppercase| Normalize[Replace 'X' with 'x'<br>Set containsX = true]
+  Normalize --> CalcType
+  X -->|Yes, lowercase| SetX[Set containsX = true]
+  SetX --> CalcType
+  X -->|No| CalcType{calcType?}
+  CalcType -->|s| SciX{containsX?}
+  SciX -->|Yes| SciReplace[Replace 'x' with '0'<br>Interpreter solves for y-intercept]
+  SciX -->|No| SciDirect[Pass directly<br>to Interpreter]
+  SciReplace --> SciOut[Print solution]
+  SciDirect --> SciOut
+  SciOut --> Exit
+  CalcType -->|g| GX{containsX?}
+  GX -->|Yes| LoadArgs[Load xMin = argVector3<br>xMax = argVector4<br>xCount = argVector5]
+  LoadArgs --> GraphRun[Run graphpoints<br>Print x,y pairs]
+  GraphRun --> YInt[Calculate y-intercept<br>via graphpoints at x=0]
+  YInt --> Exit
+  GX -->|No| Exit
+  CalcType -->|other| ErrUnsupported[cerr: Calculation not supported]
+  ErrUnsupported --> Exit
+```
