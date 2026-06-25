@@ -5,9 +5,9 @@ const { mode = "scientific" } = Astro.props;
 const isGraphing = mode === "graphing";
 ---
 
-<div class="container" data-mode={mode}>
-    
-    {isGraphing ? (
+<div class="container" data-mode={mode}> <!-- main container -->
+    <!--conditional header/prompt. below is the check for if it is graphing, if it is it shows the text with a function of x, if not it shows the text without x -->
+    {isGraphing ? ( 
         <h1>Arithmos Graphing Engine</h1>
         <p>Enter a function of x and its bounds to evaluate (e.g., <code>12x^2+3x-5</code>) with the Min Max and Steps values:</p>
     ) : (
@@ -15,11 +15,12 @@ const isGraphing = mode === "graphing";
         <p>Enter a mathematical expression to evaluate (e.g., <code>3+5*2</code>):</p>
     )}
     
-    <div class="input-group">
+    <div class="input-group"> <!--This group holds input text, expression input, and placeholder text for the expression box -->
         <input type="text" id="expressionInput" placeholder="Type expression here..." autocomplete="off">
         <button id="evaluateBtn">Evaluate</button>
     </div>
 
+    <!--This group holds the input and placeholder text for the graphing input boxes -->
     {isGraphing && (
         <div class="graph-inputs">
             <input type="text" id="xMinInput" placeholder="xMin (e.g. 0)" autocomplete="off" />
@@ -27,10 +28,10 @@ const isGraphing = mode === "graphing";
             <input type="text" id="xCountInput" placeholder="Steps (e.g. 5)" autocomplete="off" />
         </div>
     )}
-
+    <!--This says the results container, or if its graphing the table container, is hidden. -->
     <div id="resultContainer" class="result-box hidden">
-        <h3>Result:</h3>
-        <p id="resultText"></p>
+        {!isGraphing && <h3>Result:</h3>}
+        {!isGraphing && <p id="resultText"></p>}
         <div id="tableContainer"></div>
     </div>
 </div>
@@ -172,7 +173,7 @@ const isGraphing = mode === "graphing";
     const resultText = document.getElementById('resultText');
     const tableContainer = document.getElementById('tableContainer');
 
-    if (!inputElement || !resultText) return;
+    if (!inputElement) return;
     const expressionValue = inputElement.value.trim();
 
     const xMinValue = xMinElement ? xMinElement.value.trim() : "0";
@@ -185,7 +186,7 @@ const isGraphing = mode === "graphing";
     }
 
     try {
-    resultText.innerText = "Evaluating...";
+    if (resultText) resultText.innerText = "Evaluating...";
     if (tableContainer) tableContainer.innerHTML = "";
 
     let calcType = "s";
@@ -213,8 +214,7 @@ const isGraphing = mode === "graphing";
 
             if (response.ok && data.success) {
                 resultContainer?.classList.remove('hidden');
-                resultText.innerHTML = `<strong>Input:</strong> ${data.input}<br><strong>Output:</strong> ${data.result}`;
-                
+                if (resultText) resultText.innerHTML = `<strong>Input:</strong> ${data.input}<br><strong>Output:</strong> ${data.result}`;                
                 if (data.points && tableContainer) {
                     let tableHtml = "<table class='points-table'><thead><tr><th>X Value</th><th>Y Value</th></tr></thead><tbody>";
                     for (const pt of data.points) {
@@ -224,11 +224,10 @@ const isGraphing = mode === "graphing";
                     tableContainer.innerHTML = tableHtml;
                 }
             } else {
-                resultText.innerText = `Error: ${data.error || "Something went wrong"}`;
-            }
+                if (resultText) resultText.innerText = `Error: ${data.error || "Something went wrong"}`;            }
         } catch (error) {
             console.error("Fetch operation failed:", error);
-            resultText.innerText = "Error connecting to the math server backend.";
+            if (resultText) resultText.innerText = "Error connecting to the math server backend.";
         }
     }
 
