@@ -1,5 +1,5 @@
 
-# `Arithmos Machine Front-End Architecture`
+# `Explicanda Front-End Architecture`
 
 ## Overview
 
