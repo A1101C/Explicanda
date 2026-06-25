@@ -58,6 +58,6 @@ app.post('/api/evaluate', (req, res) => { //tels the server to listen for POST r
 });
 
 app.listen(port, () => {
-    console.log(`Arithmos API Server running on http://localhost:${port}`)
+    console.log(`Explicanda API Server running on http://localhost:${port}`)
 })
 

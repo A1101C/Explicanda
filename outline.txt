@@ -76,7 +76,7 @@ main.cpp                the main entrypoint
 /output                 The Folder to hold the compiled binary
 engine
 
-arithmos-core/          THE MATH ENGINE FOLDER
+explicanda-core/          THE MATH ENGINE FOLDER
 CMakeLists.txt          The master compilation instructions
 
 include/                blueprint .h files

@@ -8,10 +8,10 @@ const isGraphing = mode === "graphing";
 <div class="container" data-mode={mode}> <!-- main container -->
     <!--conditional header/prompt. below is the check for if it is graphing, if it is it shows the text with a function of x, if not it shows the text without x -->
     {isGraphing ? ( 
-        <h1>Arithmos Graphing Engine</h1>
+        <h1>Explicanda Graphing Engine</h1>
         <p>Enter a function of x and its bounds to evaluate (e.g., <code>12x^2+3x-5</code>) with the Min Max and Steps values:</p>
     ) : (
-        <h1>Arithmos Math Engine</h1>
+        <h1>Explicanda Math Engine</h1>
         <p>Enter a mathematical expression to evaluate (e.g., <code>3+5*2</code>):</p>
     )}
     
