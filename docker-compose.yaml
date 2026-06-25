@@ -1,7 +1,8 @@
 services:
-  arithmos-machine:
-    image: a1101c/arithmos-machine:latest
-    container_name: arithmos-container
+  explicanda:
+    image: a1101c/explicanda:latest
+    container_name: explicanda_container
     ports:
-      - "4321:4321"
+      - 4321:4321
     restart: unless-stopped
+networks: {}

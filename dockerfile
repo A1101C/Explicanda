@@ -3,12 +3,12 @@
 
 FROM gcc:12.2 AS cpp-builder
 
-WORKDIR /arithmos-machine/src/
+WORKDIR /explicanda/src/
 
 #copy cpp source files
-COPY main.cpp /arithmos-machine/src/
-COPY ./src/* /arithmos-machine/src/
-COPY ./include/* /arithmos-machine/src/
+COPY main.cpp /explicanda/src/
+COPY ./src/* /explicanda/src/
+COPY ./include/* /explicanda/src/
 
 #create output folder and compile binary
 RUN mkdir -p output && \
@@ -20,7 +20,7 @@ RUN mkdir -p output && \
 
 FROM node:22-slim
 
-WORKDIR /arithmos-machine/portal/
+WORKDIR /explicanda/portal/
 
 #copy package properties to install Node modules
 COPY portal/package*.json ./
@@ -30,10 +30,10 @@ RUN npm install
 COPY portal/ ./
 
 #copy the compiled cpp binary into the parent directory where evaluate.js expects it
-COPY --from=cpp-builder /arithmos-machine/src/output/engine /arithmos-machine/output/engine
+COPY --from=cpp-builder /explicanda/src/output/engine /explicanda/output/engine
 
 #ensure the process has permission to run the compiled cpp binary
-RUN chmod +x /arithmos-machine/output/engine
+RUN chmod +x /explicanda/output/engine
 
 #run the astro build command
 RUN npm run build

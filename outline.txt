@@ -69,7 +69,7 @@ Step 5: Display that graph
 
 
 Directory Outline:
-arithmos-machine/       project folder
+explicanda/       project folder
 
 main.cpp                the main entrypoint
 

@@ -1,6 +1,6 @@
-# Arithmos-Machine
+# explicanda
 
-Try the live demo here: https://arithmos-machine.com/
+Try the live demo here: https://explicanda.com/
 
 ## Project Introduction
 
@@ -48,14 +48,14 @@ As of right now the only dependencies are a C++ compiler, astro, and npm if you 
 ## Docker
 Docker Run
 ```
-docker run --name arithmos-container -p 4321:4321 --restart unless-stopped a1101c/arithmos-machine:latest
+docker run --name arithmos-container -p 4321:4321 --restart unless-stopped a1101c/explicanda:latest
 ```
 
 Docker Compose
 ```
 services:
-  arithmos-machine:
-    image: a1101c/arithmos-machine:latest
+  explicanda:
+    image: a1101c/explicanda:latest
     container_name: arithmos-container
     ports:
       - "4321:4321"
